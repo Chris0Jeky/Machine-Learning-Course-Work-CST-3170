@@ -21,14 +21,14 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/Chris/Desktop/Minecfraft/UTIL/ThirdYear/AI/Coursework/Machine Learning Course Work CST 3170/src/datasets"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Chris/Desktop/Minecfraft/UTIL/ThirdYear/AI/Coursework/Machine Learning Course Work CST 3170/src/datasets&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Chris\Desktop\Minecfraft\UTIL\ThirdYear\AI\Coursework\Machine Learning Course Work CST 3170\src\datasets" />
@@ -43,6 +43,9 @@
       <option name="presentableId" value="Default" />
       <updated>1728483558360</updated>
       <workItem from="1728483561383" duration="1542000" />
+      <workItem from="1729104256888" duration="729000" />
+      <workItem from="1729170583849" duration="912000" />
+      <workItem from="1729551212079" duration="18000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <created>1728483609094</created>
