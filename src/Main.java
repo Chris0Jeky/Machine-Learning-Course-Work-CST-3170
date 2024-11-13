@@ -22,11 +22,6 @@ public class Main {
 
         // Optionally, print the dataset to verify correctness
         print2DArr(dataSet1);
-
-        int[] numbers = {1, 2, 3, 4};
-
-        printArray(numbers);
-        printArraysInHashSet(sideEffectSwappingCombinations(numbers));
     }
 
     // Function to initialize the 2D array by reading the CSV file
@@ -79,54 +74,9 @@ public class Main {
         }
     }
 
-    public static Set<int[]> sideEffectSwappingCombinations(int[] numbers){
-        Set<int[]> sideEffectedCombinations = new HashSet<>();
-        Set<int[]> permutations = new HashSet<>();
-        for (int i = 0; i < numbers.length; i++) {
-            for (int j = 0; j < numbers.length; j++) {
-                sideEffectedCombinations.add(numbers);
-                permutations.add(numbers);
-                if (i != j) swap(numbers, i, j);
-            }
-        }
-
-        return pureSwappingCombinations(sideEffectedCombinations, permutations);
-    }
-
-    public static Set<int[]> pureSwappingCombinations(Set<int[]> sideEffectedCombinations, Set<int[]> permutations){
-
-        for (int[] combination: sideEffectedCombinations) {
-            for (int i = 0; i < combination.length; i++) {
-                for (int j = 0; j < combination.length; j++) {
-                    int[] temporaryCombination = combination.clone();
-                    permutations.add(swap(temporaryCombination, i, j));
-                }
-            }
-        }
-
-        return permutations;
-    }
-
-    public static int[] swap(int[] arr, int i, int j){
-        int temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
-
-        return arr;
-    }
-
     public static void printArray(int[] arr){
         for (int element : arr) {
             System.out.println(element);
-        }
-    }
-
-    public static void printArraysInHashSet(Set<int[]> set){
-        int i = 0;
-        for (int[] array: set) {
-            i++;
-            System.out.println("Combination: " + i);
-            printArray(array);
         }
     }
 }
