@@ -15,7 +15,7 @@ public class Main {
         int[][] dataSet1 = new int[NUM_ROWS][NUM_COLUMNS];
 
         // Path to your CSV file
-        String csvFileName1 = "C:\\Users\\Chris\\Desktop\\Minecfraft\\UTIL\\ThirdYear\\AIGradle\\Lab001v2\\src\\main\\java\\dataSet1.csv";
+        String csvFileName1 = "src/datasets/dataSet1.csv";
 
         // Fill the 2D array with data from the CSV file
         dataSet1 = initializeScanning(csvFileName1, dataSet1);
@@ -28,9 +28,14 @@ public class Main {
     private static int[][] initializeScanning(String csvFileName, int[][] dataSet) {
 
         int row = 0;
-        try (Scanner scanner = new Scanner(new File(csvFileName))) {
-            // Open the CSV file
 
+        // Create a File object
+        File file = new File(csvFileName);
+
+        // Print the absolute path
+        System.out.println("Attempting to open file at path: " + file.getAbsolutePath());
+
+        try (Scanner scanner = new Scanner(file)) {
             // Read each line from the file
             while (scanner.hasNextLine() && row < dataSet.length) {
                 String line = scanner.nextLine();
@@ -59,6 +64,7 @@ public class Main {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             System.out.println("File not found: " + csvFileName);
+            return new int[0][];
         }
 
         return dataSet;
