@@ -1,65 +1,48 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
-import java.util.Set;
 
 public class Main {
-    // Constants for dataset dimensions
-    private static final int NUM_ROWS = 2810;
-    private static final int NUM_COLUMNS = 65;
     private static final String COMMA_DELIMITER = ",";
 
     public static void main(String[] args) {
-        // Initialize a 2D array with 2810 rows and 65 columns
-        int[][] dataSet1 = new int[NUM_ROWS][NUM_COLUMNS];
-
         // Path to your CSV file
         String csvFileName1 = "src/datasets/dataSet1.csv";
 
-        // Fill the 2D array with data from the CSV file
-        dataSet1 = initializeScanning(csvFileName1, dataSet1);
+        // Determine dimensions from the file and initialize the array
+        int[][] dataSet1 = initializeScanning(csvFileName1);
 
         // Optionally, print the dataset to verify correctness
         print2DArr(dataSet1);
     }
 
     // Function to initialize the 2D array by reading the CSV file
-    private static int[][] initializeScanning(String csvFileName, int[][] dataSet) {
-
-        int row = 0;
+    private static int[][] initializeScanning(String csvFileName) {
+        List<int[]> dataList = new ArrayList<>();
 
         // Create a File object
         File file = new File(csvFileName);
-
-        // Print the absolute path
         System.out.println("Attempting to open file at path: " + file.getAbsolutePath());
 
         try (Scanner scanner = new Scanner(file)) {
             // Read each line from the file
-            while (scanner.hasNextLine() && row < dataSet.length) {
+            while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-
-                // Split the line by commas to get the values
                 String[] values = line.split(COMMA_DELIMITER);
 
-                // Check that the line has exactly 65 values
-                if (values.length != NUM_COLUMNS) {
-                    System.out.println("Error: Row " + (row + 1) + " does not have exactly 65 values.");
-                    continue;
-                }
-
-                // Parse each value and store it in the corresponding position in the 2D array
+                int[] row = new int[values.length];
                 for (int col = 0; col < values.length; col++) {
                     try {
-                        dataSet[row][col] = Integer.parseInt(values[col]);
+                        row[col] = Integer.parseInt(values[col]);
                     } catch (NumberFormatException e) {
-                        System.out.println("Error: Invalid number format at row " + (row + 1) + ", column " + (col + 1));
-                        dataSet[row][col] = 0; // Assign a default value (0) in case of invalid format
+                        System.out.println("Error: Invalid number format at row " + (dataList.size() + 1) + ", column " + (col + 1));
+                        row[col] = 0; // Assign a default value (0) in case of invalid format
                     }
                 }
 
-                row++;
+                dataList.add(row);
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -67,6 +50,8 @@ public class Main {
             return new int[0][];
         }
 
+        // Convert the list to a 2D array
+        int[][] dataSet = dataList.toArray(new int[0][]);
         return dataSet;
     }
 
@@ -80,7 +65,7 @@ public class Main {
         }
     }
 
-    public static void printArray(int[] arr){
+    public static void printArray(int[] arr) {
         for (int element : arr) {
             System.out.println(element);
         }
