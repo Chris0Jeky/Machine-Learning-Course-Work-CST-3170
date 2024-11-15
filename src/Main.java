@@ -16,6 +16,8 @@ public class Main {
         int[][] dataSet1 = initializeScanning(csvFileName1);
         int[][] dataSet2 = initializeScanning(csvFileName2);
 
+        printData(dataSet1);
+
         // Optionally, print the dataset to verify correctness
         //print2DArr(dataSet1);
         //print2DArr(dataSet2);
@@ -55,6 +57,44 @@ public class Main {
 
         // Convert the list to a 2D array
         return dataList.toArray(new int[0][]);
+    }
+
+    private static void printData(int[][] data) {
+        for (int i = 0; i < data.length; i++) {
+            printDigit(data[i]);
+            System.out.println(data[i][data[i].length - 1]);
+            System.out.println();
+        }
+    }
+
+    private static void printDigit(int[] pixelValues) {
+        if (pixelValues.length != 65) {
+            System.out.println("Error: Wrong number of pixels; " + pixelValues.length);
+            return;
+        }
+
+        for (int i = 0; i < 64; i++) {
+            int value = pixelValues[i];
+            char c;
+            if (value == 0) {
+                c = ' ';
+            } else if (value <= 3) {
+                c = '.';
+            } else if (value <= 6) {
+                c = ';';
+            } else if (value < 9) {
+                c = 'x';
+            }
+            else {
+                c = 'X';
+            }
+
+            System.out.print(" " + c + " ");
+            if ((i + 1) % 8 == 0) {
+                System.out.println();
+            }
+        }
+        System.out.println();
     }
 
     // Function to print the 2D array (optional for debugging purposes)
