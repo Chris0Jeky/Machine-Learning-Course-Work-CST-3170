@@ -8,14 +8,17 @@ public class Main {
     private static final String COMMA_DELIMITER = ",";
 
     public static void main(String[] args) {
-        // Path to your CSV file
+        // Path to CSV file
         String csvFileName1 = "src/datasets/dataSet1.csv";
+        String csvFileName2 = "src/datasets/dataSet2.csv";
 
         // Determine dimensions from the file and initialize the array
         int[][] dataSet1 = initializeScanning(csvFileName1);
+        int[][] dataSet2 = initializeScanning(csvFileName2);
 
         // Optionally, print the dataset to verify correctness
-        print2DArr(dataSet1);
+        //print2DArr(dataSet1);
+        //print2DArr(dataSet2);
     }
 
     // Function to initialize the 2D array by reading the CSV file
@@ -51,8 +54,7 @@ public class Main {
         }
 
         // Convert the list to a 2D array
-        int[][] dataSet = dataList.toArray(new int[0][]);
-        return dataSet;
+        return dataList.toArray(new int[0][]);
     }
 
     // Function to print the 2D array (optional for debugging purposes)
