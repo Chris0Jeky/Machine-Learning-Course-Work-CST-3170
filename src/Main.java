@@ -1,14 +1,14 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.List; // Make sure to import List
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
     private static final String COMMA_DELIMITER = ",";
 
     public static void main(String[] args) {
-        // Path to CSV file
+        // Path to CSV files
         String csvFileName1 = "src/datasets/dataSet1.csv";
         String csvFileName2 = "src/datasets/dataSet2.csv";
 
@@ -33,19 +33,23 @@ public class Main {
             labels2[i] = dataSet2[i][64];
         }
 
-        // Classify test images and evaluate
-        int correctPredictions = 0;
-        for (int i = 0; i < features2.length; i++) {
-            int predictedLabel = classify(features2[i], features1, labels1);
-            int actualLabel = labels2[i];
-            if (predictedLabel == actualLabel) {
-                correctPredictions++;
-            }
-            System.out.println("Test Image " + (i + 1) + ": Predicted Label = " + predictedLabel + ", Actual Label = " + actualLabel);
-        }
+        // No normalization
 
-        double accuracy = (double) correctPredictions / features2.length * 100;
-        System.out.println("Accuracy: " + accuracy + "%");
+        // Experiment with different k values
+        int[] kValues = {1, 3, 5, 7};
+
+        for (int k : kValues) {
+            int correctPredictions = 0;
+            for (int i = 0; i < features2.length; i++) {
+                int predictedLabel = classify(features2[i], features1, labels1, k);
+                int actualLabel = labels2[i];
+                if (predictedLabel == actualLabel) {
+                    correctPredictions++;
+                }
+            }
+            double accuracy = (double) correctPredictions / features2.length * 100;
+            System.out.println("Accuracy with k=" + k + ": " + accuracy + "%");
+        }
     }
 
     // Function to initialize the 2D array by reading the CSV file
@@ -94,18 +98,86 @@ public class Main {
         return Math.sqrt(sum);
     }
 
-    // Nearest Neighbor classification function
-    public static int classify(int[] testImage, int[][] trainingFeatures, int[] trainingLabels) {
-        double minDistance = Double.MAX_VALUE;
-        int predictedLabel = -1;
+    // k-NN classification function without extra libraries
+    public static int classify(int[] testImage, int[][] trainingFeatures, int[] trainingLabels, int k) {
+        int n = trainingFeatures.length;
+        double[] distances = new double[n];
+        int[] labels = new int[n];
 
-        for (int i = 0; i < trainingFeatures.length; i++) {
-            double distance = euclideanDistance(testImage, trainingFeatures[i]);
-            if (distance < minDistance) {
-                minDistance = distance;
-                predictedLabel = trainingLabels[i];
+        // Compute distances
+        for (int i = 0; i < n; i++) {
+            distances[i] = euclideanDistance(testImage, trainingFeatures[i]);
+            labels[i] = trainingLabels[i];
+        }
+
+        // Sort distances and labels together using a simple selection sort
+        for (int i = 0; i < n - 1; i++) {
+            // Find the index of the minimum distance
+            int minIndex = i;
+            for (int j = i + 1; j < n; j++) {
+                if (distances[j] < distances[minIndex]) {
+                    minIndex = j;
+                }
+            }
+            // Swap distances[i] and distances[minIndex]
+            double tempDist = distances[i];
+            distances[i] = distances[minIndex];
+            distances[minIndex] = tempDist;
+
+            // Swap labels[i] and labels[minIndex]
+            int tempLabel = labels[i];
+            labels[i] = labels[minIndex];
+            labels[minIndex] = tempLabel;
+        }
+
+        // Count labels in the first k entries
+        int[] labelCounts = new int[10]; // Assuming labels are digits 0-9
+        for (int i = 0; i < k; i++) {
+            int label = labels[i];
+            labelCounts[label]++;
+        }
+
+        // Find the label with the highest count
+        int predictedLabel = 0;
+        int maxCount = labelCounts[0];
+        for (int i = 1; i < 10; i++) {
+            if (labelCounts[i] > maxCount) {
+                maxCount = labelCounts[i];
+                predictedLabel = i;
             }
         }
-        return predictedLabel;
+
+        // Handle ties (optional)
+        // Check if multiple labels have the same max count
+        int numMaxLabels = 0;
+        for (int i = 0; i < 10; i++) {
+            if (labelCounts[i] == maxCount) {
+                numMaxLabels++;
+            }
+        }
+
+        if (numMaxLabels == 1) {
+            // Unique label with max count
+            return predictedLabel;
+        } else {
+            // Tie occurred
+            // Among the tied labels, choose the one with the smallest cumulative distance
+            double[] cumulativeDistances = new double[10];
+            for (int i = 0; i < k; i++) {
+                int label = labels[i];
+                if (labelCounts[label] == maxCount) {
+                    cumulativeDistances[label] += distances[i];
+                }
+            }
+
+            double minCumulativeDistance = Double.MAX_VALUE;
+            for (int i = 0; i < 10; i++) {
+                if (labelCounts[i] == maxCount && cumulativeDistances[i] < minCumulativeDistance) {
+                    minCumulativeDistance = cumulativeDistances[i];
+                    predictedLabel = i;
+                }
+            }
+            return predictedLabel;
+        }
     }
 }
