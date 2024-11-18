@@ -5,9 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="129c38f8-a1ea-40f6-9ede-22af183637a6" name="Changes" comment="Initial Commit">
-      <change beforePath="$PROJECT_DIR$/src/KNearestNeighborsClassifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/KNearestNeighborsClassifier.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MulticlassPerceptronClassifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MulticlassPerceptronClassifier.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Utils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -101,7 +99,7 @@
       <workItem from="1731414051332" duration="594000" />
       <workItem from="1731506222582" duration="607000" />
       <workItem from="1731615729424" duration="3291000" />
-      <workItem from="1731891300365" duration="6412000" />
+      <workItem from="1731891300365" duration="7587000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <created>1728483609094</created>
