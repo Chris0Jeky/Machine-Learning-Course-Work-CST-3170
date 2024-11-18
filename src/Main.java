@@ -1,7 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.List; // Make sure to import List
 import java.util.Scanner;
 
 public class Main {
@@ -12,15 +12,40 @@ public class Main {
         String csvFileName1 = "src/datasets/dataSet1.csv";
         String csvFileName2 = "src/datasets/dataSet2.csv";
 
-        // Determine dimensions from the file and initialize the array
+        // Read data from CSV files
         int[][] dataSet1 = initializeScanning(csvFileName1);
         int[][] dataSet2 = initializeScanning(csvFileName2);
 
-        printData(dataSet1);
+        // Prepare features and labels
+        int[][] features1 = new int[dataSet1.length][64];
+        int[] labels1 = new int[dataSet1.length];
 
-        // Optionally, print the dataset to verify correctness
-        //print2DArr(dataSet1);
-        //print2DArr(dataSet2);
+        for (int i = 0; i < dataSet1.length; i++) {
+            System.arraycopy(dataSet1[i], 0, features1[i], 0, 64);
+            labels1[i] = dataSet1[i][64];
+        }
+
+        int[][] features2 = new int[dataSet2.length][64];
+        int[] labels2 = new int[dataSet2.length];
+
+        for (int i = 0; i < dataSet2.length; i++) {
+            System.arraycopy(dataSet2[i], 0, features2[i], 0, 64);
+            labels2[i] = dataSet2[i][64];
+        }
+
+        // Classify test images and evaluate
+        int correctPredictions = 0;
+        for (int i = 0; i < features2.length; i++) {
+            int predictedLabel = classify(features2[i], features1, labels1);
+            int actualLabel = labels2[i];
+            if (predictedLabel == actualLabel) {
+                correctPredictions++;
+            }
+            System.out.println("Test Image " + (i + 1) + ": Predicted Label = " + predictedLabel + ", Actual Label = " + actualLabel);
+        }
+
+        double accuracy = (double) correctPredictions / features2.length * 100;
+        System.out.println("Accuracy: " + accuracy + "%");
     }
 
     // Function to initialize the 2D array by reading the CSV file
@@ -59,57 +84,28 @@ public class Main {
         return dataList.toArray(new int[0][]);
     }
 
-    private static void printData(int[][] data) {
-        for (int i = 0; i < data.length; i++) {
-            printDigit(data[i]);
-            System.out.println(data[i][data[i].length - 1]);
-            System.out.println();
+    // Euclidean distance function
+    public static double euclideanDistance(int[] vector1, int[] vector2) {
+        double sum = 0.0;
+        for (int i = 0; i < vector1.length; i++) {
+            double diff = vector1[i] - vector2[i];
+            sum += diff * diff;
         }
+        return Math.sqrt(sum);
     }
 
-    private static void printDigit(int[] pixelValues) {
-        if (pixelValues.length != 65) {
-            System.out.println("Error: Wrong number of pixels; " + pixelValues.length);
-            return;
-        }
+    // Nearest Neighbor classification function
+    public static int classify(int[] testImage, int[][] trainingFeatures, int[] trainingLabels) {
+        double minDistance = Double.MAX_VALUE;
+        int predictedLabel = -1;
 
-        for (int i = 0; i < 64; i++) {
-            int value = pixelValues[i];
-            char c;
-            if (value == 0) {
-                c = ' ';
-            } else if (value <= 3) {
-                c = '.';
-            } else if (value <= 6) {
-                c = ';';
-            } else if (value < 9) {
-                c = 'x';
-            }
-            else {
-                c = 'X';
-            }
-
-            System.out.print(" " + c + " ");
-            if ((i + 1) % 8 == 0) {
-                System.out.println();
+        for (int i = 0; i < trainingFeatures.length; i++) {
+            double distance = euclideanDistance(testImage, trainingFeatures[i]);
+            if (distance < minDistance) {
+                minDistance = distance;
+                predictedLabel = trainingLabels[i];
             }
         }
-        System.out.println();
-    }
-
-    // Function to print the 2D array (optional for debugging purposes)
-    private static void print2DArr(int[][] arr) {
-        for (int[] ints : arr) {
-            for (int anInt : ints) {
-                System.out.print(anInt + " ");
-            }
-            System.out.println(); // Move to the next line after printing a row
-        }
-    }
-
-    public static void printArray(int[] arr) {
-        for (int element : arr) {
-            System.out.println(element);
-        }
+        return predictedLabel;
     }
 }
