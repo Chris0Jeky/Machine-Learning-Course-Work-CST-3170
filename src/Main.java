@@ -1,43 +1,53 @@
 public class Main {
     public static void main(String[] args) {
+        System.out.println("Starting the machine learning project...");
+
         // Paths to CSV files
         String csvFileName1 = "datasets/dataSet1.csv";
         String csvFileName2 = "datasets/dataSet2.csv";
 
-        // Load data
+        // Load datasets
+        System.out.println("Loading datasets...");
         int[][] dataSet1 = DataLoader.loadData(csvFileName1);
         int[][] dataSet2 = DataLoader.loadData(csvFileName2);
+        System.out.println("Datasets loaded successfully!");
 
         // Prepare features and labels
-        int[][] features1 = Utils.extractFeatures(dataSet1);
-        int[] labels1 = Utils.extractLabels(dataSet1);
+        int[][] trainingFeatures = Utils.extractFeatures(dataSet1);
+        int[] trainingLabels = Utils.extractLabels(dataSet1);
+        int[][] testFeatures = Utils.extractFeatures(dataSet2);
+        int[] testLabels = Utils.extractLabels(dataSet2);
 
-        int[][] features2 = Utils.extractFeatures(dataSet2);
-        int[] labels2 = Utils.extractLabels(dataSet2);
+        // Number of classes
+        int numClasses = Utils.getMaxLabel(trainingLabels) + 1; // Assuming labels start from 0
 
-        // Nearest Neighbor Classification
-        NearestNeighborClassifier nnClassifier = new NearestNeighborClassifier(features1, labels1);
-        double nnAccuracy = evaluateClassifier(nnClassifier, features2, labels2);
-        System.out.println("Nearest Neighbor Accuracy: " + nnAccuracy + "%\n");
+        // Initialize classifiers
+        System.out.println("Initializing classifiers...");
+        MulticlassSVMClassifier svm = new MulticlassSVMClassifier(0.001, 0.01, 1000, trainingFeatures[0].length, numClasses);
+        MulticlassPerceptronClassifier perceptron = new MulticlassPerceptronClassifier(1000, trainingFeatures[0].length, numClasses);
+        KNearestNeighborsClassifier knn = new KNearestNeighborsClassifier(3, numClasses); // k = 3
+        NearestNeighborClassifier nearestNeighbor = new NearestNeighborClassifier();
 
-        // k-Nearest Neighbors Classification
-        int[] kValues = {1, 3, 5, 7};
-        for (int k : kValues) {
-            KNearestNeighborsClassifier knnClassifier = new KNearestNeighborsClassifier(features1, labels1, k);
-            double knnAccuracy = evaluateClassifier(knnClassifier, features2, labels2);
-            System.out.println("k-NN Accuracy with k=" + k + ": " + knnAccuracy + "%");
-        }
-    }
+        // Train and evaluate classifiers
+        Classifier[] classifiers = {svm, perceptron, knn, nearestNeighbor};
+        String[] classifierNames = {"Multiclass SVM", "Multiclass Perceptron", "k-NN", "Nearest Neighbor"};
 
-    // Method to evaluate a classifier and return accuracy
-    private static double evaluateClassifier(Classifier classifier, int[][] testFeatures, int[] testLabels) {
-        int correctPredictions = 0;
-        for (int i = 0; i < testFeatures.length; i++) {
-            int predictedLabel = classifier.predict(testFeatures[i]);
-            if (predictedLabel == testLabels[i]) {
-                correctPredictions++;
+        for (int i = 0; i < classifiers.length; i++) {
+            System.out.println("\nTraining " + classifierNames[i] + "...");
+            classifiers[i].train(trainingFeatures, trainingLabels);
+
+            System.out.println("Evaluating " + classifierNames[i] + "...");
+            int correctPredictions = 0;
+            for (int j = 0; j < testFeatures.length; j++) {
+                int predictedLabel = classifiers[i].predict(testFeatures[j]);
+                if (predictedLabel == testLabels[j]) {
+                    correctPredictions++;
+                }
             }
+            double accuracy = (double) correctPredictions / testFeatures.length * 100;
+            System.out.println(classifierNames[i] + " Accuracy: " + accuracy + "%");
         }
-        return (double) correctPredictions / testFeatures.length * 100;
+
+        System.out.println("All classifiers evaluated successfully!");
     }
 }
