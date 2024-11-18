@@ -2,10 +2,6 @@ public class NearestNeighborClassifier implements Classifier {
     private int[][] trainingFeatures;
     private int[] trainingLabels;
 
-    public NearestNeighborClassifier() {
-        // Default constructor
-    }
-
     @Override
     public void train(int[][] features, int[] labels) {
         this.trainingFeatures = features;
