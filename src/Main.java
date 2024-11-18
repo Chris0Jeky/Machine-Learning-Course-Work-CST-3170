@@ -9,8 +9,8 @@ public class Main {
 
     public static void main(String[] args) {
         // Path to CSV files
-        String csvFileName1 = "src/datasets/dataSet1.csv";
-        String csvFileName2 = "src/datasets/dataSet2.csv";
+        String csvFileName1 = "datasets/dataSet1.csv";
+        String csvFileName2 = "datasets/dataSet2.csv";
 
         // Read data from CSV files
         int[][] dataSet1 = initializeScanning(csvFileName1);
