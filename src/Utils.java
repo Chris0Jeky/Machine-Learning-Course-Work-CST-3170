@@ -45,4 +45,15 @@ public class Utils {
         }
         return result;
     }
+
+    public static int getMaxLabel(int[] labels) {
+        int max = Integer.MIN_VALUE;
+        for (int label : labels) {
+            if (label > max) {
+                max = label;
+            }
+        }
+        return max;
+    }
+
 }
