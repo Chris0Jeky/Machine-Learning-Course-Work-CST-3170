@@ -50,18 +50,6 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="QodanaHighlightedReportService">
-    <option name="localRunNotPublishedPersistedInfo">
-      <LocalReportPersistedInfo>
-        <option name="path" value="C:\Users\jekyt\AppData\Local\Temp\qodana_output\qodana.sarif.json" />
-        <option name="reportGuid" value="e0839466-342a-40b2-9c5f-6052c1420a75" />
-        <option name="reportName" value="Machine-Learning-Course-Work-CST-3170/qodana/2024-11-15" />
-      </LocalReportPersistedInfo>
-    </option>
-  </component>
-  <component name="QodanaIsSelectedPersistenceService">
-    <option name="selectedOrLoading" value="true" />
-  </component>
   <component name="QodanaReportsService">
     <option name="descriptions">
       <ReportDescription localRun="true" path="C:\Users\jekyt\AppData\Local\Temp\qodana_output\qodana.sarif.json" reportGuid="e0839466-342a-40b2-9c5f-6052c1420a75" reportId="Machine-Learning-Course-Work-CST-3170/qodana/2024-11-15" />
@@ -99,6 +87,7 @@
       <workItem from="1731414051332" duration="594000" />
       <workItem from="1731506222582" duration="607000" />
       <workItem from="1731615729424" duration="3291000" />
+      <workItem from="1731891300365" duration="336000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <created>1728483609094</created>
