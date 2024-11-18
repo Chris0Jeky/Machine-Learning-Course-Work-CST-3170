@@ -3,10 +3,14 @@ public class KNearestNeighborsClassifier implements Classifier {
     private int[] trainingLabels;
     private int k;
 
-    public KNearestNeighborsClassifier(int[][] trainingFeatures, int[] trainingLabels, int k) {
-        this.trainingFeatures = trainingFeatures;
-        this.trainingLabels = trainingLabels;
+    public KNearestNeighborsClassifier(int k) {
         this.k = k;
+    }
+
+    @Override
+    public void train(int[][] features, int[] labels) {
+        this.trainingFeatures = features;
+        this.trainingLabels = labels;
     }
 
     @Override
