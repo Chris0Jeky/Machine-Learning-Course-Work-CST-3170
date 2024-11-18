@@ -1,82 +1,53 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.HashSet;
-import java.util.Scanner;
-import java.util.Set;
-
 public class Main {
-    // Constants for dataset dimensions
-    private static final int NUM_ROWS = 2810;
-    private static final int NUM_COLUMNS = 65;
-    private static final String COMMA_DELIMITER = ",";
-
     public static void main(String[] args) {
-        // Initialize a 2D array with 2810 rows and 65 columns
-        int[][] dataSet1 = new int[NUM_ROWS][NUM_COLUMNS];
+        System.out.println("Starting the machine learning project...");
 
-        // Path to your CSV file
-        String csvFileName1 = "C:\\Users\\Chris\\Desktop\\Minecfraft\\UTIL\\ThirdYear\\AIGradle\\Lab001v2\\src\\main\\java\\dataSet1.csv";
+        // Paths to CSV files
+        String csvFileName1 = "datasets/dataSet1.csv";
+        String csvFileName2 = "datasets/dataSet2.csv";
 
-        // Fill the 2D array with data from the CSV file
-        dataSet1 = initializeScanning(csvFileName1, dataSet1);
+        // Load datasets
+        System.out.println("Loading datasets...");
+        int[][] dataSet1 = DataLoader.loadData(csvFileName1);
+        int[][] dataSet2 = DataLoader.loadData(csvFileName2);
+        System.out.println("Datasets loaded successfully!");
 
-        // Optionally, print the dataset to verify correctness
-        print2DArr(dataSet1);
-    }
+        // Prepare features and labels
+        int[][] trainingFeatures = Utils.extractFeatures(dataSet1);
+        int[] trainingLabels = Utils.extractLabels(dataSet1);
+        int[][] testFeatures = Utils.extractFeatures(dataSet2);
+        int[] testLabels = Utils.extractLabels(dataSet2);
 
-    // Function to initialize the 2D array by reading the CSV file
-    private static int[][] initializeScanning(String csvFileName, int[][] dataSet) {
+        // Number of classes
+        int numClasses = Utils.getMaxLabel(trainingLabels) + 1; // Assuming labels start from 0
 
-        int row = 0;
-        try (Scanner scanner = new Scanner(new File(csvFileName))) {
-            // Open the CSV file
+        // Initialize classifiers
+        System.out.println("Initializing classifiers...");
+        MulticlassSVMClassifier svm = new MulticlassSVMClassifier(0.001, 0.01, 1000, trainingFeatures[0].length, numClasses);
+        MulticlassPerceptronClassifier perceptron = new MulticlassPerceptronClassifier(1000, trainingFeatures[0].length, numClasses);
+        KNearestNeighborsClassifier knn = new KNearestNeighborsClassifier(3, numClasses); // k = 3
+        NearestNeighborClassifier nearestNeighbor = new NearestNeighborClassifier();
 
-            // Read each line from the file
-            while (scanner.hasNextLine() && row < dataSet.length) {
-                String line = scanner.nextLine();
+        // Train and evaluate classifiers
+        Classifier[] classifiers = {svm, perceptron, knn, nearestNeighbor};
+        String[] classifierNames = {"Multiclass SVM", "Multiclass Perceptron", "k-NN", "Nearest Neighbor"};
 
-                // Split the line by commas to get the values
-                String[] values = line.split(COMMA_DELIMITER);
+        for (int i = 0; i < classifiers.length; i++) {
+            System.out.println("\nTraining " + classifierNames[i] + "...");
+            classifiers[i].train(trainingFeatures, trainingLabels);
 
-                // Check that the line has exactly 65 values
-                if (values.length != NUM_COLUMNS) {
-                    System.out.println("Error: Row " + (row + 1) + " does not have exactly 65 values.");
-                    continue;
+            System.out.println("Evaluating " + classifierNames[i] + "...");
+            int correctPredictions = 0;
+            for (int j = 0; j < testFeatures.length; j++) {
+                int predictedLabel = classifiers[i].predict(testFeatures[j]);
+                if (predictedLabel == testLabels[j]) {
+                    correctPredictions++;
                 }
-
-                // Parse each value and store it in the corresponding position in the 2D array
-                for (int col = 0; col < values.length; col++) {
-                    try {
-                        dataSet[row][col] = Integer.parseInt(values[col]);
-                    } catch (NumberFormatException e) {
-                        System.out.println("Error: Invalid number format at row " + (row + 1) + ", column " + (col + 1));
-                        dataSet[row][col] = 0; // Assign a default value (0) in case of invalid format
-                    }
-                }
-
-                row++;
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            System.out.println("File not found: " + csvFileName);
+            double accuracy = (double) correctPredictions / testFeatures.length * 100;
+            System.out.println(classifierNames[i] + " Accuracy: " + accuracy + "%");
         }
 
-        return dataSet;
-    }
-
-    // Function to print the 2D array (optional for debugging purposes)
-    private static void print2DArr(int[][] arr) {
-        for (int[] ints : arr) {
-            for (int anInt : ints) {
-                System.out.print(anInt + " ");
-            }
-            System.out.println(); // Move to the next line after printing a row
-        }
-    }
-
-    public static void printArray(int[] arr){
-        for (int element : arr) {
-            System.out.println(element);
-        }
+        System.out.println("All classifiers evaluated successfully!");
     }
 }
