@@ -1,4 +1,4 @@
-public class LinearSVMClassifier implements Classifier {
+public class LinearSVMClassifier {
     private double[] weights;
     private double bias;
     private double learningRate;
@@ -13,7 +13,6 @@ public class LinearSVMClassifier implements Classifier {
         this.bias = 0.0;
     }
 
-    @Override
     public void train(int[][] features, int[] labels) {
         int n = features.length;
         int d = features[0].length;
@@ -31,8 +30,7 @@ public class LinearSVMClassifier implements Classifier {
                     for (int j = 0; j < d; j++) {
                         weights[j] -= learningRate * (2 * regularizationParam * weights[j]);
                     }
-                    // Update bias
-                    // No update needed for bias in this case
+                    // No update for bias
                 } else {
                     // Update weights
                     for (int j = 0; j < d; j++) {
@@ -45,10 +43,13 @@ public class LinearSVMClassifier implements Classifier {
         }
     }
 
-    @Override
     public int predict(int[] sample) {
         double linearOutput = dotProduct(weights, sample) + bias;
         return linearOutput >= 0 ? 1 : -1;
+    }
+
+    public double decisionFunction(int[] sample) {
+        return dotProduct(weights, sample) + bias;
     }
 
     private double dotProduct(double[] w, int[] x) {
@@ -58,9 +59,4 @@ public class LinearSVMClassifier implements Classifier {
         }
         return result;
     }
-
-    public double decisionFunction(int[] sample) {
-        return dotProduct(weights, sample) + bias;
-    }
-
 }
