@@ -2,9 +2,11 @@ public class KNearestNeighborsClassifier implements Classifier {
     private int[][] trainingFeatures;
     private int[] trainingLabels;
     private int k;
+    private int numClasses;
 
-    public KNearestNeighborsClassifier(int k) {
+    public KNearestNeighborsClassifier(int k, int numClasses) {
         this.k = k;
+        this.numClasses = numClasses;
     }
 
     @Override
@@ -46,16 +48,18 @@ public class KNearestNeighborsClassifier implements Classifier {
         }
 
         // Count labels in the first k entries
-        int[] labelCounts = new int[10]; // Assuming labels are digits 0-9
+        int[] labelCounts = new int[numClasses];
         for (int i = 0; i < k; i++) {
             int label = labels[i];
-            labelCounts[label]++;
+            if (label >= 0 && label < numClasses) {
+                labelCounts[label]++;
+            }
         }
 
         // Find the label with the highest count
-        int predictedLabel = 0;
-        int maxCount = labelCounts[0];
-        for (int i = 1; i < 10; i++) {
+        int predictedLabel = -1;
+        int maxCount = -1;
+        for (int i = 0; i < numClasses; i++) {
             if (labelCounts[i] > maxCount) {
                 maxCount = labelCounts[i];
                 predictedLabel = i;
@@ -64,8 +68,8 @@ public class KNearestNeighborsClassifier implements Classifier {
 
         // Handle ties
         int numMaxLabels = 0;
-        for (int count : labelCounts) {
-            if (count == maxCount) {
+        for (int i = 0; i < numClasses; i++) {
+            if (labelCounts[i] == maxCount) {
                 numMaxLabels++;
             }
         }
@@ -76,7 +80,7 @@ public class KNearestNeighborsClassifier implements Classifier {
         } else {
             // Tie occurred
             // Among the tied labels, choose the one with the smallest cumulative distance
-            double[] cumulativeDistances = new double[10];
+            double[] cumulativeDistances = new double[numClasses];
             for (int i = 0; i < k; i++) {
                 int label = labels[i];
                 if (labelCounts[label] == maxCount) {
@@ -85,7 +89,7 @@ public class KNearestNeighborsClassifier implements Classifier {
             }
 
             double minCumulativeDistance = Double.MAX_VALUE;
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < numClasses; i++) {
                 if (labelCounts[i] == maxCount && cumulativeDistances[i] < minCumulativeDistance) {
                     minCumulativeDistance = cumulativeDistances[i];
                     predictedLabel = i;
