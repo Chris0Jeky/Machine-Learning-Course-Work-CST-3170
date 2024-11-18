@@ -1,3 +1,4 @@
 public interface Classifier {
-    int predict(int[] testImage);
+    void train(int[][] features, int[] labels);
+    int predict(int[] sample);
 }
