@@ -22,6 +22,10 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
+  <component name="KubernetesApiProvider"><![CDATA[{
+  "isMigrated": true
+}]]></component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
@@ -99,7 +103,7 @@
       <workItem from="1731414051332" duration="594000" />
       <workItem from="1731506222582" duration="607000" />
       <workItem from="1731615729424" duration="3291000" />
-      <workItem from="1731891300365" duration="7587000" />
+      <workItem from="1731891300365" duration="7953000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <created>1728483609094</created>
