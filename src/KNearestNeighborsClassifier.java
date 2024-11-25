@@ -53,6 +53,8 @@ public class KNearestNeighborsClassifier implements Classifier {
             int label = labels[i];
             if (label >= 0 && label < numClasses) {
                 labelCounts[label]++;
+            } else {
+                System.err.println("Warning: Label out of bounds: " + label);
             }
         }
 
