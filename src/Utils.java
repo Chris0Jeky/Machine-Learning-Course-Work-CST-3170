@@ -52,10 +52,10 @@ public class Utils {
     }
 
     // Split dataset into k folds
-    public static Fold[] splitIntoFolds(int[][] features, int[] labels, int k) {
+    public static int[][][] splitIntoFolds(int[][] features, int[] labels, int k) {
         int n = features.length;
         int foldSize = n / k;
-        Fold[] folds = new Fold[k];
+        int[][][] folds = new int[k][2][]; // Each fold has [features][labels]
 
         for (int fold = 0; fold < k; fold++) {
             int start = fold * foldSize;
@@ -67,9 +67,9 @@ public class Utils {
             System.arraycopy(features, start, foldFeatures, 0, end - start);
             System.arraycopy(labels, start, foldLabels, 0, end - start);
 
-            folds[fold] = new Fold(foldFeatures, foldLabels);
+            folds[fold][0] = foldFeatures;
+            folds[fold][1] = foldLabels;
         }
         return folds;
     }
-
 }
