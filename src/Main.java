@@ -28,7 +28,7 @@ public class Main {
 
 // Split into two folds
         System.out.println("Splitting dataset into two folds...");
-        int[][][] folds = Utils.splitIntoFolds(features, labels, 2); // 2 folds
+        Fold[] folds = Utils.splitIntoFolds(features, labels, 2); // 2 folds
         System.out.println("Dataset split into folds successfully!");
 
 
