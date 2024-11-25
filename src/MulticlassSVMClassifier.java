@@ -1,10 +1,22 @@
 public class MulticlassSVMClassifier implements Classifier {
     private int numClasses;
     private LinearSVMClassifier[] classifiers;
+    private double learningRate;
+    private double regularizationParam;
+    private int epochs;
+    private int featureSize;
 
     public MulticlassSVMClassifier(double learningRate, double regularizationParam, int epochs, int featureSize, int numClasses) {
+        this.learningRate = learningRate;
+        this.regularizationParam = regularizationParam;
+        this.epochs = epochs;
+        this.featureSize = featureSize;
         this.numClasses = numClasses;
-        this.classifiers = new LinearSVMClassifier[numClasses];
+        initializeClassifiers();
+    }
+
+    private void initializeClassifiers() {
+        classifiers = new LinearSVMClassifier[numClasses];
         for (int i = 0; i < numClasses; i++) {
             classifiers[i] = new LinearSVMClassifier(learningRate, regularizationParam, epochs, featureSize);
         }
@@ -12,6 +24,7 @@ public class MulticlassSVMClassifier implements Classifier {
 
     @Override
     public void train(int[][] features, int[] labels) {
+        initializeClassifiers(); // Reset classifiers for each fold
         int n = features.length;
 
         // For each class, train a binary classifier
