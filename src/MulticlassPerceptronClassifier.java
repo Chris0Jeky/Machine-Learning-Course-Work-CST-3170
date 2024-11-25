@@ -9,12 +9,11 @@ public class MulticlassPerceptronClassifier implements Classifier {
         this.epochs = epochs;
         this.featureSize = featureSize;
         this.numClasses = numClasses;
-        this.weights = new double[numClasses][featureSize];
-        this.biases = new double[numClasses];
     }
 
     @Override
     public void train(int[][] features, int[] labels) {
+        initializeWeightsAndBiases();
         int n = features.length;
 
         for (int epoch = 0; epoch < epochs; epoch++) {
@@ -48,6 +47,11 @@ public class MulticlassPerceptronClassifier implements Classifier {
         }
     }
 
+    private void initializeWeightsAndBiases() {
+        weights = new double[numClasses][featureSize];
+        biases = new double[numClasses];
+    }
+
     @Override
     public int predict(int[] sample) {
         double[] scores = new double[numClasses];
@@ -57,7 +61,7 @@ public class MulticlassPerceptronClassifier implements Classifier {
         return argMax(scores);
     }
 
-    private int argMax(double[] scores) {
+private int argMax(double[] scores) {
         double maxScore = Double.NEGATIVE_INFINITY;
         int maxIndex = -1;
         for (int i = 0; i < scores.length; i++) {
