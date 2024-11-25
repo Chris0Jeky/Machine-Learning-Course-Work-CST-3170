@@ -12,6 +12,26 @@ public class Main {
         int[][] dataSet2 = DataLoader.loadData(csvFileName2);
         System.out.println("Datasets loaded successfully!");
 
+        // Combine datasets
+        System.out.println("Combining datasets...");
+        int[][] combinedData = Utils.combineDatasets(dataSet1, dataSet2);
+        System.out.println("Datasets combined successfully!");
+
+// Shuffle combined dataset
+        System.out.println("Shuffling the combined dataset...");
+        Utils.shuffleDataset(combinedData);
+        System.out.println("Dataset shuffled successfully!");
+
+// Split into features and labels
+        int[][] features = Utils.extractFeatures(combinedData);
+        int[] labels = Utils.extractLabels(combinedData);
+
+// Split into two folds
+        System.out.println("Splitting dataset into two folds...");
+        int[][][] folds = Utils.splitIntoFolds(features, labels, 2); // 2 folds
+        System.out.println("Dataset split into folds successfully!");
+
+
         // Prepare features and labels
         int[][] trainingFeatures = Utils.extractFeatures(dataSet1);
         int[] trainingLabels = Utils.extractLabels(dataSet1);
