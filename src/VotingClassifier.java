@@ -1,3 +1,6 @@
+import java.util.HashMap;
+import java.util.Map;
+
 public class VotingClassifier implements Classifier {
     private Classifier[] classifiers;
 
