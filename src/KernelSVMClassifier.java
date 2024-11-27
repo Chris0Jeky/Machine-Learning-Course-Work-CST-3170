@@ -127,4 +127,16 @@ public class KernelSVMClassifier implements Classifier {
         }
         return j;
     }
+
+    public double decisionFunction(int[] sample) {
+        double sum = 0.0;
+        for (int i = 0; i < trainingFeatures.length; i++) {
+            if (alphas[i] > 0) {
+                sum += alphas[i] * trainingLabels[i] * kernel.compute(trainingFeatures[i], sample);
+            }
+        }
+        sum += b;
+        return sum;
+    }
+
 }
