@@ -78,4 +78,60 @@ public class Utils {
             }
         }
     }
+
+    // Compute centroids for each class
+    public static double[][] computeCentroids(int[][] features, int[] labels, int numClasses) {
+        int numFeatures = features[0].length;
+        double[][] centroids = new double[numClasses][numFeatures];
+        int[] counts = new int[numClasses];
+
+        // Sum features for each class
+        for (int i = 0; i < features.length; i++) {
+            int label = labels[i];
+            for (int j = 0; j < numFeatures; j++) {
+                centroids[label][j] += features[i][j];
+            }
+            counts[label]++;
+        }
+
+        // Compute average
+        for (int c = 0; c < numClasses; c++) {
+            if (counts[c] > 0) {
+                for (int j = 0; j < numFeatures; j++) {
+                    centroids[c][j] /= counts[c];
+                }
+            }
+        }
+        return centroids;
+    }
+
+    // Add centroid distance features
+    public static int[][] addCentroidFeatures(int[][] features, double[][] centroids) {
+        int n = features.length;
+        int originalFeatureSize = features[0].length;
+        int numClasses = centroids.length;
+        int[][] newFeatures = new int[n][originalFeatureSize + numClasses];
+
+        for (int i = 0; i < n; i++) {
+            // Copy original features
+            System.arraycopy(features[i], 0, newFeatures[i], 0, originalFeatureSize);
+
+            // Compute distances to centroids
+            for (int c = 0; c < numClasses; c++) {
+                double distance = euclideanDistance(features[i], centroids[c]);
+                newFeatures[i][originalFeatureSize + c] = (int) distance;
+            }
+        }
+        return newFeatures;
+    }
+
+    // Euclidean distance between feature vector and centroid
+    public static double euclideanDistance(int[] x1, double[] x2) {
+        double sum = 0.0;
+        for (int i = 0; i < x1.length; i++) {
+            double diff = x1[i] - x2[i];
+            sum += diff * diff;
+        }
+        return Math.sqrt(sum);
+    }
 }
