@@ -21,14 +21,23 @@ public class Main {
         // Number of classes
         int numClasses = Utils.getMaxLabel(labels1, labels2) + 1; // Assuming labels start from 0
 
-        System.out.println("Initializing classifiers...");
+        // Initialize base classifiers
+        Classifier svm = new MulticlassKernelSVMClassifier(1.0, 0.001, 5, new RBFKernel(0.05), numClasses);
+        Classifier perceptron = new MulticlassPerceptronClassifier(1000, features1[0].length, numClasses);
+        Classifier knn = new KNearestNeighborsClassifier(3, numClasses);
+
+// Create ensemble classifier
+        Classifier votingClassifier = new VotingClassifier(new Classifier[]{svm, perceptron, knn});
+
+// Include in the list of classifiers
         Classifier[] classifiers = {
-                new MulticlassKernelSVMClassifier(1.0, 0.001, 5, new RBFKernel(0.05), numClasses),
-                new MulticlassPerceptronClassifier(1000, features1[0].length, numClasses),
-                new KNearestNeighborsClassifier(3, numClasses), // k = 3
+                votingClassifier,
+                svm,
+                perceptron,
+                knn,
                 new NearestNeighborClassifier()
         };
-        String[] classifierNames = {"Multiclass Kernel SVM", "Multiclass Perceptron", "k-NN", "Nearest Neighbor"};
+        String[] classifierNames = {"Voting Classifier", "Multiclass Kernel SVM", "Multiclass Perceptron", "k-NN", "Nearest Neighbor"};
 
         // Arrays to store accuracies
         double[][] accuracies = new double[classifiers.length][2]; // [classifier][fold]
