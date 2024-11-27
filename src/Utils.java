@@ -1,6 +1,4 @@
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.Arrays;
 
 public class Utils {
     // Extract features (first 64 columns)
@@ -45,5 +43,39 @@ public class Utils {
             }
         }
         return max;
+    }
+
+    // Feature scaling to [0, 1]
+    public static void scaleFeatures(int[][] features) {
+        int numFeatures = features[0].length;
+        double[] minValues = new double[numFeatures];
+        double[] maxValues = new double[numFeatures];
+
+        // Initialize min and max values
+        Arrays.fill(minValues, Double.MAX_VALUE);
+        Arrays.fill(maxValues, Double.MIN_VALUE);
+
+        // Find min and max for each feature
+        for (int[] sample : features) {
+            for (int i = 0; i < numFeatures; i++) {
+                if (sample[i] < minValues[i]) {
+                    minValues[i] = sample[i];
+                }
+                if (sample[i] > maxValues[i]) {
+                    maxValues[i] = sample[i];
+                }
+            }
+        }
+
+        // Scale features
+        for (int[] sample : features) {
+            for (int i = 0; i < numFeatures; i++) {
+                if (maxValues[i] != minValues[i]) {
+                    sample[i] = (int) ((sample[i] - minValues[i]) / (maxValues[i] - minValues[i]));
+                } else {
+                    sample[i] = 0;
+                }
+            }
+        }
     }
 }
