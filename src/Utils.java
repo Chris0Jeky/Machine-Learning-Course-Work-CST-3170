@@ -45,18 +45,17 @@ public class Utils {
         return max;
     }
 
-    // Feature scaling to [0, 1]
-    public static void scaleFeatures(int[][] features) {
-        int numFeatures = features[0].length;
+    // Feature scaling to [0, 1] using min-max normalization
+    public static void scaleFeatures(int[][] trainFeatures, int[][] testFeatures) {
+        int numFeatures = trainFeatures[0].length;
+
+        // Find min and max for each feature in the training set
         double[] minValues = new double[numFeatures];
         double[] maxValues = new double[numFeatures];
-
-        // Initialize min and max values
         Arrays.fill(minValues, Double.MAX_VALUE);
         Arrays.fill(maxValues, Double.MIN_VALUE);
 
-        // Find min and max for each feature
-        for (int[] sample : features) {
+        for (int[] sample : trainFeatures) {
             for (int i = 0; i < numFeatures; i++) {
                 if (sample[i] < minValues[i]) {
                     minValues[i] = sample[i];
@@ -67,11 +66,22 @@ public class Utils {
             }
         }
 
-        // Scale features
-        for (int[] sample : features) {
+        // Scale training features
+        for (int[] sample : trainFeatures) {
             for (int i = 0; i < numFeatures; i++) {
                 if (maxValues[i] != minValues[i]) {
-                    sample[i] = (int) ((sample[i] - minValues[i]) / (maxValues[i] - minValues[i]));
+                    sample[i] = (int) ((sample[i] - minValues[i]) / (maxValues[i] - minValues[i]) * 255);
+                } else {
+                    sample[i] = 0;
+                }
+            }
+        }
+
+        // Scale test features using training min and max
+        for (int[] sample : testFeatures) {
+            for (int i = 0; i < numFeatures; i++) {
+                if (maxValues[i] != minValues[i]) {
+                    sample[i] = (int) ((sample[i] - minValues[i]) / (maxValues[i] - minValues[i]) * 255);
                 } else {
                     sample[i] = 0;
                 }
