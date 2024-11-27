@@ -29,7 +29,7 @@ public class Main {
                 new NearestNeighborClassifier()
         };
         String[] classifierNames = {"Multiclass Kernel SVM", "Multiclass Perceptron", "k-NN", "Nearest Neighbor"};
-        
+
         // Arrays to store accuracies
         double[][] accuracies = new double[classifiers.length][2]; // [classifier][fold]
 
