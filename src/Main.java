@@ -63,12 +63,13 @@ public class Main {
 
             // Initialize classifiers
             System.out.println("Initializing classifiers...");
+            Classifier svm = new MulticlassKernelSVMClassifier(1.0, 0.001, 5, new RBFKernel(0.05), numClasses);
             Classifier perceptron = new MulticlassPerceptronClassifier(1000, featureSize, numClasses);
             Classifier knn = new KNearestNeighborsClassifier(3, numClasses);
             Classifier nearestNeighbor = new NearestNeighborClassifier();
-            Classifier votingClassifier = new VotingClassifier(new Classifier[]{perceptron, knn});
+            Classifier votingClassifier = new VotingClassifier(new Classifier[]{svm, perceptron, knn});
 
-            Classifier[] classifiers = {votingClassifier, perceptron, knn, nearestNeighbor};
+            Classifier[] classifiers = {svm, votingClassifier, perceptron, knn, nearestNeighbor};
 
             // For each classifier, train and evaluate
             for (int i = 0; i < classifiers.length; i++) {
