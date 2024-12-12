@@ -26,7 +26,9 @@ public class Main {
 
         // Two-fold testing
         // Classifier names and arrays must match in length
-        String[] classifierNames = {"Multiclass Perceptron", "k-NN", "Nearest Neighbor"};
+       // String[] classifierNames = {"Multiclass Perceptron", "k-NN", "Nearest Neighbor"};
+
+        String[] classifierNames = {"Hybrid (NN+MLP)", "Nearest Neighbor"};
         double[][] accuracies = new double[classifierNames.length][2];
 
         for (int fold = 0; fold < 2; fold++) {
@@ -49,17 +51,36 @@ public class Main {
                 testFeatures = features1;
                 testLabels = labels1;
             }
+            // Compute centroids from training data
+            double[][] centroids = Utils.computeCentroids(trainFeatures, trainLabels, numClasses);
 
-            // Initialize classifiers
-            System.out.println("Initializing classifiers...");
+// Add centroid features
+            trainFeatures = Utils.addCentroidFeatures(trainFeatures, centroids);
+            testFeatures = Utils.addCentroidFeatures(testFeatures, centroids);
+
             int featureSize = trainFeatures[0].length;
-            Classifier perceptron = new MulticlassPerceptronClassifier(200, featureSize, numClasses);
-            // Reduced epochs to 200 for speed - you can adjust if needed
 
-            Classifier knn = new KNearestNeighborsClassifier(3, numClasses);
-            Classifier nearestNeighbor = new NearestNeighborClassifier();
+// Initialize a MulticlassSVMClassifier
+            Classifier svmWithCentroids = new MulticlassSVMClassifier(0.001, 0.01, 1000, featureSize, numClasses);
 
-            Classifier[] classifiers = {perceptron, knn, nearestNeighbor};
+// Train and test svmWithCentroids similarly to other classifiers.
+
+//            // Initialize classifiers
+//            System.out.println("Initializing classifiers...");
+//            Classifier perceptron = new MulticlassPerceptronClassifier(200, featureSize, numClasses);
+//            // Reduced epochs to 200 for speed - you can adjust if needed
+//
+//            Classifier knn = new KNearestNeighborsClassifier(3, numClasses);
+//            Classifier nearestNeighbor = new NearestNeighborClassifier();
+//
+//            Classifier[] classifiers = {perceptron, knn, nearestNeighbor};
+
+            // Suppose we pick distanceThreshold = 20 as a starting point
+            Classifier nn = new NearestNeighborClassifier();
+            Classifier mlp = new MLPClassifier(featureSize, 50, numClasses, 0.001, 50);
+            Classifier hybrid = new HybridClassifier((NearestNeighborClassifier)nn, mlp, 20.0);
+
+            Classifier[] classifiers = {hybrid, nn};
 
             // Train and evaluate each classifier
             for (int i = 0; i < classifiers.length; i++) {
