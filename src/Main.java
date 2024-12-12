@@ -12,7 +12,7 @@ public class Main {
         int[][] dataSet2 = DataLoader.loadData(csvFileName2);
         System.out.println("Datasets loaded successfully!");
 
-        // Prepare features and labels (no scaling, no centroid features)
+        // Extract original features and labels (no scaling, no centroid features)
         int[][] features1 = Utils.extractFeatures(dataSet1);
         int[] labels1 = Utils.extractLabels(dataSet1);
         int[][] features2 = Utils.extractFeatures(dataSet2);
@@ -20,15 +20,10 @@ public class Main {
 
         // Determine number of classes
         int numClasses = Utils.getMaxLabel(labels1, labels2) + 1;
+        // Baseline scenario: Just Nearest Neighbor
 
-        // We'll use just three classifiers: Perceptron, k-NN, and Nearest Neighbor
-        // This was stable and gave you near-baseline accuracy previously.
-
-        // Two-fold testing
-        // Classifier names and arrays must match in length
-       // String[] classifierNames = {"Multiclass Perceptron", "k-NN", "Nearest Neighbor"};
-
-        String[] classifierNames = {"Hybrid (NN+MLP)", "Nearest Neighbor"};
+        // Two-fold testing with just Nearest Neighbor
+        String[] classifierNames = {"Nearest Neighbor"};
         double[][] accuracies = new double[classifierNames.length][2];
 
         for (int fold = 0; fold < 2; fold++) {
@@ -51,37 +46,11 @@ public class Main {
                 testFeatures = features1;
                 testLabels = labels1;
             }
-            // Compute centroids from training data
-            double[][] centroids = Utils.computeCentroids(trainFeatures, trainLabels, numClasses);
-            trainFeatures = Utils.addCentroidFeatures(trainFeatures, centroids);
-            testFeatures = Utils.addCentroidFeatures(testFeatures, centroids);
 
-            int featureSize = trainFeatures[0].length;
-            Classifier svm = new MulticlassSVMClassifier(0.001, 0.01, 1000, featureSize, numClasses);
-
-
-// Initialize a MulticlassSVMClassifier
-            Classifier svmWithCentroids = new MulticlassSVMClassifier(0.001, 0.01, 1000, featureSize, numClasses);
-
-// Train and test svmWithCentroids similarly to other classifiers.
-
-//            // Initialize classifiers
-//            System.out.println("Initializing classifiers...");
-//            Classifier perceptron = new MulticlassPerceptronClassifier(200, featureSize, numClasses);
-//            // Reduced epochs to 200 for speed - you can adjust if needed
-//
-//            Classifier knn = new KNearestNeighborsClassifier(3, numClasses);
-//            Classifier nearestNeighbor = new NearestNeighborClassifier();
-//
-//            Classifier[] classifiers = {perceptron, knn, nearestNeighbor};
-
-            double threshold = 18.0; // Try 18, 19, 20, 21, etc.
+            // Just Nearest Neighbor
             Classifier nn = new NearestNeighborClassifier();
-            Classifier mlp = new MLPClassifier(featureSize, 100, numClasses, 0.002, 100); // more complex MLP
-            Classifier hybrid = new HybridClassifier((NearestNeighborClassifier) nn, mlp, threshold);
-            Classifier weightedKnn = new WeightedKNearestNeighborsClassifier(3, numClasses);
 
-            Classifier[] classifiers = {hybrid, nn};
+            Classifier[] classifiers = {nn};
 
             // Train and evaluate each classifier
             for (int i = 0; i < classifiers.length; i++) {
@@ -117,5 +86,36 @@ public class Main {
         }
 
         System.out.println("Two-fold testing completed successfully!");
+
+        // 1. Weighted K-NN:
+        // Uncomment to try Weighted K-NN (immediately after original NN test)
+        // Classifier weightedKnn = new WeightedKNearestNeighborsClassifier(3, numClasses);
+        // Compare accuracy to NN:
+        // Add "Weighted K-NN" to classifierNames and weightedKnn to classifiers array.
+
+        // 2. MLP Classifier:
+        // Add an MLPClassifier:
+        // Classifier mlp = new MLPClassifier(featureSize, 100, numClasses, 0.002, 100);
+        // Train mlp on trainFeatures (or scaled, if you implement scaling)
+        // Compare accuracy to NN
+
+        // 3. Centroid Features + SVM:
+        // double[][] centroids = Utils.computeCentroids(trainFeatures, trainLabels, numClasses);
+        // trainFeatures = Utils.addCentroidFeatures(trainFeatures, centroids);
+        // testFeatures = Utils.addCentroidFeatures(testFeatures, centroids);
+        // Then:
+        // Classifier svmWithCentroids = new MulticlassSVMClassifier(0.001, 0.01, 1000, trainFeatures[0].length, numClasses);
+
+        // 4. Scaling for MLP or SVM only:
+        // int[][] trainFeaturesScaled = Utils.deepCopy(trainFeatures);
+        // int[][] testFeaturesScaled = Utils.deepCopy(testFeatures);
+        // Utils.scaleFeatures(trainFeaturesScaled, testFeaturesScaled);
+        // mlp.train(trainFeaturesScaled, trainLabels);
+
+        // 5. Hybrid (NN+MLP):
+        // Classifier hybrid = new HybridClassifier((NearestNeighborClassifier) nn, mlp, 20.0);
+        // Add "Hybrid (NN+MLP)" to classifierNames and hybrid to classifiers array.
+
+        // Remember to uncomment corresponding lines and adjust arrays and loops as needed.
     }
 }
