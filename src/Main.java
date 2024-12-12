@@ -53,12 +53,12 @@ public class Main {
             }
             // Compute centroids from training data
             double[][] centroids = Utils.computeCentroids(trainFeatures, trainLabels, numClasses);
-
-// Add centroid features
             trainFeatures = Utils.addCentroidFeatures(trainFeatures, centroids);
             testFeatures = Utils.addCentroidFeatures(testFeatures, centroids);
 
             int featureSize = trainFeatures[0].length;
+            Classifier svm = new MulticlassSVMClassifier(0.001, 0.01, 1000, featureSize, numClasses);
+
 
 // Initialize a MulticlassSVMClassifier
             Classifier svmWithCentroids = new MulticlassSVMClassifier(0.001, 0.01, 1000, featureSize, numClasses);
