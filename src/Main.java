@@ -12,23 +12,27 @@ public class Main {
         int[][] dataSet2 = DataLoader.loadData(csvFileName2);
         System.out.println("Datasets loaded successfully!");
 
-        // Prepare features and labels for both datasets
+        // Prepare features and labels (no scaling, no centroid features)
         int[][] features1 = Utils.extractFeatures(dataSet1);
         int[] labels1 = Utils.extractLabels(dataSet1);
         int[][] features2 = Utils.extractFeatures(dataSet2);
         int[] labels2 = Utils.extractLabels(dataSet2);
 
-        // Number of classes
-        int numClasses = Utils.getMaxLabel(labels1, labels2) + 1; // Assuming labels start from 0
+        // Determine number of classes
+        int numClasses = Utils.getMaxLabel(labels1, labels2) + 1;
+
+        // We'll use just three classifiers: Perceptron, k-NN, and Nearest Neighbor
+        // This was stable and gave you near-baseline accuracy previously.
 
         // Two-fold testing
-        double[][] accuracies = new double[4][2]; // [classifier][fold]
-        String[] classifierNames = {"Voting Classifier", "Multiclass Perceptron", "k-NN", "Nearest Neighbor"};
+        // Classifier names and arrays must match in length
+        String[] classifierNames = {"Multiclass Perceptron", "k-NN", "Nearest Neighbor"};
+        double[][] accuracies = new double[classifierNames.length][2];
 
         for (int fold = 0; fold < 2; fold++) {
             System.out.println("\n=== Fold " + (fold + 1) + " ===");
 
-            // Prepare training and testing data
+            // Prepare training and testing data for this fold
             int[][] trainFeatures, testFeatures;
             int[] trainLabels, testLabels;
 
@@ -46,44 +50,37 @@ public class Main {
                 testLabels = labels1;
             }
 
-            // Scale features
-            System.out.println("Scaling features...");
-            Utils.scaleFeatures(trainFeatures, testFeatures);
-
-            // Compute centroids from training data
-            System.out.println("Computing centroids...");
-            double[][] centroids = Utils.computeCentroids(trainFeatures, trainLabels, numClasses);
-
-            // Add centroid features to training and testing data
-            System.out.println("Adding centroid-based features...");
-            trainFeatures = Utils.addCentroidFeatures(trainFeatures, centroids);
-            testFeatures = Utils.addCentroidFeatures(testFeatures, centroids);
-
-            int featureSize = trainFeatures[0].length;
-
             // Initialize classifiers
             System.out.println("Initializing classifiers...");
-            Classifier svm = new MulticlassKernelSVMClassifier(1.0, 0.001, 5, new RBFKernel(0.05), numClasses);
-            Classifier perceptron = new MulticlassPerceptronClassifier(1000, featureSize, numClasses);
+            int featureSize = trainFeatures[0].length;
+            Classifier perceptron = new MulticlassPerceptronClassifier(200, featureSize, numClasses);
+            // Reduced epochs to 200 for speed - you can adjust if needed
+
             Classifier knn = new KNearestNeighborsClassifier(3, numClasses);
             Classifier nearestNeighbor = new NearestNeighborClassifier();
-            Classifier votingClassifier = new VotingClassifier(new Classifier[]{svm, perceptron, knn});
 
-            Classifier[] classifiers = {svm, votingClassifier, perceptron, knn, nearestNeighbor};
+            Classifier[] classifiers = {perceptron, knn, nearestNeighbor};
 
-            // For each classifier, train and evaluate
+            // Train and evaluate each classifier
             for (int i = 0; i < classifiers.length; i++) {
                 System.out.println("\nTraining " + classifierNames[i] + "...");
+                long startTime = System.currentTimeMillis();
                 classifiers[i].train(trainFeatures, trainLabels);
+                long endTime = System.currentTimeMillis();
+                System.out.println(classifierNames[i] + " training took: " + (endTime - startTime) + " ms");
 
                 System.out.println("Evaluating " + classifierNames[i] + "...");
                 int correctPredictions = 0;
+                startTime = System.currentTimeMillis();
                 for (int j = 0; j < testFeatures.length; j++) {
                     int predictedLabel = classifiers[i].predict(testFeatures[j]);
                     if (predictedLabel == testLabels[j]) {
                         correctPredictions++;
                     }
                 }
+                endTime = System.currentTimeMillis();
+                System.out.println(classifierNames[i] + " evaluation took: " + (endTime - startTime) + " ms");
+
                 double accuracy = (double) correctPredictions / testFeatures.length * 100;
                 accuracies[i][fold] = accuracy;
                 System.out.println(classifierNames[i] + " Accuracy: " + accuracy + "%");
@@ -92,7 +89,7 @@ public class Main {
 
         // Calculate and display average accuracies
         System.out.println("\n=== Average Accuracies ===");
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < classifierNames.length; i++) {
             double averageAccuracy = (accuracies[i][0] + accuracies[i][1]) / 2;
             System.out.println(classifierNames[i] + " Average Accuracy: " + averageAccuracy + "%");
         }
