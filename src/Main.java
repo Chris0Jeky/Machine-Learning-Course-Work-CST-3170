@@ -79,6 +79,7 @@ public class Main {
             Classifier nn = new NearestNeighborClassifier();
             Classifier mlp = new MLPClassifier(featureSize, 100, numClasses, 0.002, 100); // more complex MLP
             Classifier hybrid = new HybridClassifier((NearestNeighborClassifier) nn, mlp, threshold);
+            Classifier weightedKnn = new WeightedKNearestNeighborsClassifier(3, numClasses);
 
             Classifier[] classifiers = {hybrid, nn};
 
