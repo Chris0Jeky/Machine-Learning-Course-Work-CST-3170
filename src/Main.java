@@ -75,10 +75,10 @@ public class Main {
 //
 //            Classifier[] classifiers = {perceptron, knn, nearestNeighbor};
 
-            // Suppose we pick distanceThreshold = 20 as a starting point
+            double threshold = 18.0; // Try 18, 19, 20, 21, etc.
             Classifier nn = new NearestNeighborClassifier();
-            Classifier mlp = new MLPClassifier(featureSize, 50, numClasses, 0.001, 50);
-            Classifier hybrid = new HybridClassifier((NearestNeighborClassifier)nn, mlp, 20.0);
+            Classifier mlp = new MLPClassifier(featureSize, 100, numClasses, 0.002, 100); // more complex MLP
+            Classifier hybrid = new HybridClassifier((NearestNeighborClassifier) nn, mlp, threshold);
 
             Classifier[] classifiers = {hybrid, nn};
 
