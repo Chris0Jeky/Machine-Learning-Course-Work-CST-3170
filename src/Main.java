@@ -647,10 +647,12 @@ public class Main {
                         3,     // maxDepth
                         5,     // minSamplesLeaf
                         10,    // minSamplesSplit
-                        1.0,   // lambda (L2 reg)
-                        0.0,   // gamma (no min split loss requirement)
-                        1.0    // maxFeaturesRatio (use all features)
+                        1.0,   // lambda
+                        0.0,   // gamma (try 0.0 as default)
+                        1.0    // maxFeaturesRatio (try 1.0 to use all features)
                 );
+
+
                 mcGBT.train(trainFeatures, trainLabels);
 
                 int correctPredictions = 0;
