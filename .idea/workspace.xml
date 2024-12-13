@@ -4,15 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="129c38f8-a1ea-40f6-9ede-22af183637a6" name="Changes" comment="Initial Commit">
-      <change afterPath="$PROJECT_DIR$/src/Kernel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/KernelSVMClassifier.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/LinearKernel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/RBFKernel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MulticlassSVMClassifier.java" beforeDir="false" />
-    </list>
+    <list default="true" id="129c38f8-a1ea-40f6-9ede-22af183637a6" name="Changes" comment="Initial Commit" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -76,6 +68,9 @@
     </option>
   </component>
   <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Chris\Desktop\Minecfraft\UTIL\ThirdYear\AI\Coursework\Machine Learning Course Work CST 3170\src\datasets" />
     </key>
@@ -117,7 +112,7 @@
       <workItem from="1732707598904" duration="595000" />
       <workItem from="1732716417872" duration="6604000" />
       <workItem from="1733248019599" duration="569000" />
-      <workItem from="1734023593082" duration="18524000" />
+      <workItem from="1734023593082" duration="18833000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <created>1728483609094</created>
