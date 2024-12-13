@@ -139,14 +139,19 @@ public class Main {
                     System.out.println(classifierNames[i] + " training took: " + (endTime - startTime) + " ms");
 
                     System.out.println("Evaluating " + classifierNames[i] + "...");
+
+                    int[][] confusionMatrix = new int[numClasses][numClasses];
+
                     int correctPredictions = 0;
                     startTime = System.currentTimeMillis();
                     // Evaluate on test set
                     for (int j = 0; j < testFeatures.length; j++) {
                         int predictedLabel = classifiers[i].predict(testFeatures[j]);
+                        int actualLabel = testLabels[j];
                         if (predictedLabel == testLabels[j]) {
                             correctPredictions++;
                         }
+                        confusionMatrix[actualLabel][predictedLabel]++;
                     }
                     endTime = System.currentTimeMillis();
                     System.out.println(classifierNames[i] + " evaluation took: " + (endTime - startTime) + " ms");
@@ -154,6 +159,14 @@ public class Main {
                     double accuracy = (double) correctPredictions / testFeatures.length * 100;
                     accuracies[i][fold] = accuracy;
                     System.out.println(classifierNames[i] + " Accuracy: " + accuracy + "%");
+
+                    System.out.println("Confusion Matrix for " + classifierNames[i] + ":");
+                    for (int a = 0; a < numClasses; a++) {
+                        for (int p = 0; p < numClasses; p++) {
+                            System.out.print(confusionMatrix[a][p] + " ");
+                        }
+                        System.out.println();
+                    }
                 }
             }
 
@@ -214,13 +227,18 @@ public class Main {
                     System.out.println(classifierNames[i] + " training took: " + (endTime - startTime) + " ms");
 
                     System.out.println("Evaluating " + classifierNames[i] + "...");
+
+                    int[][] confusionMatrix = new int[numClasses][numClasses];
+
                     int correctPredictions = 0;
                     startTime = System.currentTimeMillis();
                     for (int j = 0; j < testFeatures.length; j++) {
                         int predictedLabel = classifiers[i].predict(testFeatures[j]);
+                        int actualLabel = testLabels[j];
                         if (predictedLabel == testLabels[j]) {
                             correctPredictions++;
                         }
+                        confusionMatrix[actualLabel][predictedLabel]++;
                     }
                     endTime = System.currentTimeMillis();
                     System.out.println(classifierNames[i] + " evaluation took: " + (endTime - startTime) + " ms");
@@ -228,6 +246,14 @@ public class Main {
                     double accuracy = (double) correctPredictions / testFeatures.length * 100;
                     accuracies[i][fold] = accuracy;
                     System.out.println(classifierNames[i] + " Accuracy: " + accuracy + "%");
+
+                    System.out.println("Confusion Matrix for " + classifierNames[i] + ":");
+                    for (int a = 0; a < numClasses; a++) {
+                        for (int p = 0; p < numClasses; p++) {
+                            System.out.print(confusionMatrix[a][p] + " ");
+                        }
+                        System.out.println();
+                    }
                 }
             }
 
@@ -291,13 +317,18 @@ public class Main {
                     System.out.println(classifierNames[i] + " training took: " + (endTime - startTime) + " ms");
 
                     System.out.println("Evaluating " + classifierNames[i] + "...");
+
+                    int[][] confusionMatrix = new int[numClasses][numClasses];
+
                     int correctPredictions = 0;
                     startTime = System.currentTimeMillis();
                     for (int j = 0; j < testFeatures.length; j++) {
                         int predictedLabel = classifiers[i].predict(testFeatures[j]);
+                        int actualLabel = testLabels[j];
                         if (predictedLabel == testLabels[j]) {
                             correctPredictions++;
                         }
+                        confusionMatrix[actualLabel][predictedLabel]++;
                     }
                     endTime = System.currentTimeMillis();
                     System.out.println(classifierNames[i] + " evaluation took: " + (endTime - startTime) + " ms");
@@ -305,6 +336,14 @@ public class Main {
                     double accuracy = (double) correctPredictions / testFeatures.length * 100;
                     accuracies[i][fold] = accuracy;
                     System.out.println(classifierNames[i] + " Accuracy: " + accuracy + "%");
+
+                    System.out.println("Confusion Matrix for " + classifierNames[i] + ":");
+                    for (int a = 0; a < numClasses; a++) {
+                        for (int p = 0; p < numClasses; p++) {
+                            System.out.print(confusionMatrix[a][p] + " ");
+                        }
+                        System.out.println();
+                    }
                 }
             }
 
@@ -366,13 +405,18 @@ public class Main {
 
                 for (int i = 0; i < classifiers.length; i++) {
                     System.out.println("\nEvaluating " + classifierNames[i] + "...");
+
+                    int[][] confusionMatrix = new int[numClasses][numClasses];
+
                     int correctPredictions = 0;
                     long startTime = System.currentTimeMillis();
                     for (int j = 0; j < testFeatures.length; j++) {
                         int predictedLabel = classifiers[i].predict(testFeatures[j]);
+                        int actualLabel = testLabels[j];
                         if (predictedLabel == testLabels[j]) {
                             correctPredictions++;
                         }
+                        confusionMatrix[actualLabel][predictedLabel]++;
                     }
                     long endTime = System.currentTimeMillis();
                     System.out.println(classifierNames[i] + " evaluation took: " + (endTime - startTime) + " ms");
@@ -380,6 +424,14 @@ public class Main {
                     double accuracy = (double) correctPredictions / testFeatures.length * 100;
                     accuracies[i][fold] = accuracy;
                     System.out.println(classifierNames[i] + " Accuracy: " + accuracy + "%");
+
+                    System.out.println("Confusion Matrix for " + classifierNames[i] + ":");
+                    for (int a = 0; a < numClasses; a++) {
+                        for (int p = 0; p < numClasses; p++) {
+                            System.out.print(confusionMatrix[a][p] + " ");
+                        }
+                        System.out.println();
+                    }
                 }
             }
 
@@ -450,13 +502,18 @@ public class Main {
                 Classifier voting = new SimpleVotingClassifier(new Classifier[]{nn, mlp, weightedKnn});
 
                 System.out.println("\nEvaluating " + classifierNames[0] + "...");
+
+                int[][] confusionMatrix = new int[numClasses][numClasses];
+
                 int correctPredictions = 0;
                 startTime = System.currentTimeMillis();
                 for (int j = 0; j < testFeatures.length; j++) {
                     int predictedLabel = voting.predict(testFeatures[j]);
+                    int actualLabel = testLabels[j];
                     if (predictedLabel == testLabels[j]) {
                         correctPredictions++;
                     }
+                    confusionMatrix[actualLabel][predictedLabel]++;
                 }
                 endTime = System.currentTimeMillis();
                 System.out.println(classifierNames[0] + " evaluation took: " + (endTime - startTime) + " ms");
@@ -464,6 +521,14 @@ public class Main {
                 double accuracy = (double) correctPredictions / testFeatures.length * 100;
                 accuracies[0][fold] = accuracy;
                 System.out.println(classifierNames[0] + " Accuracy: " + accuracy + "%");
+
+                System.out.println("Confusion Matrix for " + classifierNames[0] + ":");
+                for (int a = 0; a < numClasses; a++) {
+                    for (int p = 0; p < numClasses; p++) {
+                        System.out.print(confusionMatrix[a][p] + " ");
+                    }
+                    System.out.println();
+                }
             }
 
             System.out.println("\n=== Average Accuracies ===");
