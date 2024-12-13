@@ -4,6 +4,7 @@ import java.util.Random;
 
 
 class GradientTree {
+    // A regression tree fitting gradients for one dimension (e.g. one class).
     private Node root;
     private int maxDepth;
     private int minSamplesLeaf;
@@ -120,7 +121,7 @@ class GradientTree {
 
                 double leftVar = 0.0;
                 double rightVar = 0.0;
-                // For a more efficient code, precompute prefix sums of squared gradients or just sum of gradients,
+                // TODO: For a more efficient code, precompute prefix sums of squared gradients or just sum of gradients,
                 // but here we do brute force:
                 for (int j = 0; j < leftSize; j++) {
                     int idL = indices.get(j);
