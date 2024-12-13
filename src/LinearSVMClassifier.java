@@ -1,4 +1,5 @@
 public class LinearSVMClassifier {
+    // A linear SVM using SGD on hinge loss.
     private double[] weights;
     private double bias;
     private double learningRate;
@@ -17,22 +18,24 @@ public class LinearSVMClassifier {
         int n = features.length;
         int d = features[0].length;
 
+        // Perform epochs of SGD
         for (int epoch = 0; epoch < epochs; epoch++) {
             for (int i = 0; i < n; i++) {
                 int[] x = features[i];
-                int y = labels[i];
+                int y = labels[i]; // expected {+1,-1}
 
                 double linearOutput = dotProduct(weights, x) + bias;
                 double yPred = y * linearOutput;
 
+                // Hinge loss condition
                 if (yPred >= 1) {
-                    // Update weights
+                    // Update weights for regularization only
                     for (int j = 0; j < d; j++) {
                         weights[j] -= learningRate * (2 * regularizationParam * weights[j]);
                     }
                     // No update for bias
                 } else {
-                    // Update weights
+                    // Update weights and bias for misclassified sample
                     for (int j = 0; j < d; j++) {
                         weights[j] -= learningRate * (2 * regularizationParam * weights[j] - y * x[j]);
                     }
