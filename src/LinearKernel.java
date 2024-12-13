@@ -1,4 +1,5 @@
 public class LinearKernel implements Kernel {
+    // Linear kernel: K(x,z) = x·z
     @Override
     public double compute(int[] x1, int[] x2) {
         double sum = 0.0;
