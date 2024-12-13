@@ -450,10 +450,11 @@ public class Main {
         }
 
         // ------------------------------------------------------------
-// EXPERIMENT: Multiclass Kernel SVM with Linear or RBF Kernel
-// ------------------------------------------------------------
+        // EXPERIMENT: Multiclass Kernel SVM with Linear or RBF Kernel
+        // ------------------------------------------------------------
+        /*
         {
-            System.out.println("\n=== Experiment: Multiclass Kernel SVM (RBF) ===");
+            System.out.println("\n=== Experiment: Multiclass Kernel SVM (Linear) ===");
 
             int[][] dataSet1 = DataLoader.loadData("datasets/dataSet1.csv");
             int[][] dataSet2 = DataLoader.loadData("datasets/dataSet2.csv");
@@ -520,10 +521,11 @@ public class Main {
                 System.out.println(classifierNames[i] + " Average Accuracy: " + averageAccuracy + "%");
             }
         }
+        */
 
         // ------------------------------------------------------------
-// EXPERIMENT: Random Forest (Simplified)
-// ------------------------------------------------------------
+        // EXPERIMENT: Random Forest (Simplified)
+        // ------------------------------------------------------------
         {
             System.out.println("\n=== Experiment: Random Forest (Simplified) ===");
 
