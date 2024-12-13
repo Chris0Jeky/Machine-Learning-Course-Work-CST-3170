@@ -5,7 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="129c38f8-a1ea-40f6-9ede-22af183637a6" name="Changes" comment="Initial Commit">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GradientBoostedTreesClassifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GradientBoostedTreesClassifier.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SimpleGradientTree.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SimpleGradientTree.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -114,7 +115,11 @@
       <workItem from="1732707598904" duration="595000" />
       <workItem from="1732716417872" duration="6604000" />
       <workItem from="1733248019599" duration="569000" />
+<<<<<<< HEAD
       <workItem from="1734023593082" duration="24652000" />
+=======
+      <workItem from="1734023593082" duration="23400000" />
+>>>>>>> parent of ca80a33 (updated gradient tree)
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <created>1728483609094</created>
