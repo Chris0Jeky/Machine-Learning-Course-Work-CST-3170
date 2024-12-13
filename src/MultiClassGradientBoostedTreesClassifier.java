@@ -1,6 +1,9 @@
 import java.util.*;
 
 public class MultiClassGradientBoostedTreesClassifier implements Classifier {
+    // A multi-class Gradient Boosted Trees classifier using softmax cross-entropy.
+    // Builds an ensemble of decision trees for each class at each iteration.
+
     private int numClasses;
     private int numTrees;     // number of boosting rounds
     private double eta;       // learning rate
@@ -29,7 +32,7 @@ public class MultiClassGradientBoostedTreesClassifier implements Classifier {
         int n = features.length;
 
         // Convert labels from {0,...,numClasses-1} to categorical
-        // Already suitable for multi-class softmax.
+        // Suitable for multi-class softmax.
 
         // Initialize predictions (raw scores) = 0
         predictions = new double[n][numClasses];
@@ -41,10 +44,10 @@ public class MultiClassGradientBoostedTreesClassifier implements Classifier {
 
         allTrees = new ArrayList<>();
         for (int round = 0; round < numTrees; round++) {
-            // Compute probabilities using softmax
+            // Compute probabilities via softmax from current raw predictions
             double[][] probs = computeSoftmaxProbabilities(predictions);
 
-            // Compute gradients
+            // Compute first-order gradients of softmax cross-entropy
             double[][] gradients = new double[n][numClasses];
             // If second-order, we would also compute Hessians: double[][] hessians = ...
             // For now, first-order only
@@ -63,7 +66,7 @@ public class MultiClassGradientBoostedTreesClassifier implements Classifier {
                 tree.train(features, classGradients);
                 treesThisRound.add(tree);
 
-                // Update predictions: predictions[i][c] += eta * tree.predict(features[i])
+                // Update predictions with this tree's outputs scaled by eta
                 for (int i = 0; i < n; i++) {
                     predictions[i][c] += eta * tree.predict(features[i]);
                 }
