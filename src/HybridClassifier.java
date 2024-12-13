@@ -1,4 +1,5 @@
 public class HybridClassifier implements Classifier {
+    // Uses NearestNeighbor for close samples, and a fallback if distance is large.
     private NearestNeighborClassifier nn;
     private Classifier fallback;
     private double distanceThreshold;
