@@ -1,6 +1,7 @@
 import java.util.*;
 
 public class GradientBoostedTreesClassifier implements Classifier {
+    // A simplified binary classification GBT using logistic loss (no second-order yet).
     private int numTrees;
     private double eta; // learning rate
     private int maxDepth;
@@ -55,7 +56,7 @@ public class GradientBoostedTreesClassifier implements Classifier {
         double p = 1.0 / (1.0 + Math.exp(-score));
         return (p >= 0.5) ? 1 : 0;
     }
-
+    // Computes gradient of logistic loss for binary classification.
     private double[] computeGradients(int[] y, double[] predictions) {
         // logistic loss gradient w.r.t. raw score:
         // gradient_i = -y_i * p_i where p_i = 1/(1+exp(y_i*prediction_i))
