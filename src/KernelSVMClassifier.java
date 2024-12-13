@@ -1,4 +1,6 @@
 public class KernelSVMClassifier implements Classifier {
+    // A kernel-based SVM classifier using a simplified SMO algorithm.
+    // Assumes a binary classification problem with labels {+1, -1} (caller is responsible for conversion).
     private int[][] trainingFeatures;
     private int[] trainingLabels;
     private double[] alphas;
@@ -10,6 +12,11 @@ public class KernelSVMClassifier implements Classifier {
     private int n; // number of samples
 
     public KernelSVMClassifier(double C, double tol, int maxPasses, Kernel kernel, int numClasses) {
+        // C: regularization parameter
+        // tol: tolerance for convergence
+        // maxPasses: how many passes without alpha changes before stopping
+        // kernel: chosen kernel function
+        // numClasses: assumed to be 2 for binary classification
         this.C = C;
         this.tol = tol;
         this.maxPasses = maxPasses;
@@ -24,13 +31,13 @@ public class KernelSVMClassifier implements Classifier {
         alphas = new double[n];
         b = 0.0;
 
-        // SMO variables
+        // Simplified SMO iteration
         int passes = 0;
 
         // Convert labels from {0,...} to {+1, -1} if needed
         // Assume labels are already +1 or -1. If not, you must convert them before training.
 
-        // Check if labels contain {1,-1}, if not, try to convert:
+        // Check if labels are {+1, -1}, if not, assume conversion done by caller
         boolean needConversion = false;
         for (int l : labels) {
             if (l != 1 && l != -1) {
@@ -40,18 +47,16 @@ public class KernelSVMClassifier implements Classifier {
         }
         int[] convertedLabels = labels;
         if (needConversion) {
-            // If your code expects binary problem {1,-1}, you must have done that before calling train.
-            // For multiclass, MulticlassKernelSVMClassifier does this conversion.
-            // Here, we assume the caller already converted.
+            // Here we trust the caller; if needed, they'd convert labels beforehand
             convertedLabels = labels; // If we reached here, just assume labels are {1,-1}.
         }
 
-        // Simple SMO Implementation
+        // Iterate until no alpha changes for maxPasses times
         while (passes < maxPasses) {
             int numChangedAlphas = 0;
             for (int i = 0; i < n; i++) {
                 double Ei = computeError(i, convertedLabels);
-
+                // SMO conditions to pick alpha_i and alpha_j
                 if ((convertedLabels[i] * Ei < -tol && alphas[i] < C) ||
                         (convertedLabels[i] * Ei > tol && alphas[i] > 0)) {
 
@@ -97,7 +102,7 @@ public class KernelSVMClassifier implements Classifier {
                     // Update alphas[i]
                     alphas[i] = alphas[i] + convertedLabels[i] * convertedLabels[j] * (alphaJold - alphas[j]);
 
-                    // Compute b1 and b2
+                    // Compute new bias terms
                     double b1 = b - Ei
                             - convertedLabels[i] * (alphas[i] - alphaIold) * kernel.compute(trainingFeatures[i], trainingFeatures[i])
                             - convertedLabels[j] * (alphas[j] - alphaJold) * kernel.compute(trainingFeatures[i], trainingFeatures[j]);
@@ -127,11 +132,13 @@ public class KernelSVMClassifier implements Classifier {
 
     @Override
     public int predict(int[] sample) {
+        // Decision based on sign of decision function
         double val = decisionFunction(sample);
         return val >= 0 ? 1 : -1;
     }
 
     public double decisionFunction(int[] sample) {
+        // Compute w.x + b indirectly via support vectors (alphas > 0)
         double sumVal = 0.0;
         for (int i = 0; i < n; i++) {
             if (alphas[i] > 0) {
@@ -143,6 +150,7 @@ public class KernelSVMClassifier implements Classifier {
     }
 
     private double computeError(int i, int[] convertedLabels) {
+        // E_i = f(x_i) - y_i
         double fx_i = 0.0;
         for (int j = 0; j < n; j++) {
             if (alphas[j] > 0) {
