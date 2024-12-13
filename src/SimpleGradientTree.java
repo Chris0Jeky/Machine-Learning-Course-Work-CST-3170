@@ -119,11 +119,7 @@ class SimpleGradientTree {
         double varRight = (sumRight * sumRight) / countRight;
         double varAfter = varLeft + varRight;
 
-        double gain = varAfter - varBefore;
-        // Actually, we want reduction in error, so we might consider gain = varAfter - varBefore negative.
-        // If varAfter < varBefore, we got improvement. We'll treat higher varAfter as better or we can do gain = varBefore - varAfter.
-        // Let's fix this:
-        gain = varBefore - varAfter; // improvement
+        double gain = varBefore - varAfter;
         return (gain > 0) ? gain : 0.0;
     }
 
