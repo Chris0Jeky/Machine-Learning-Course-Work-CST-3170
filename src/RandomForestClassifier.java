@@ -1,66 +1,70 @@
+import java.util.*;
+
 public class RandomForestClassifier implements Classifier {
     private int numTrees;
     private int numClasses;
-    private java.util.List<SimpleDecisionTreeClassifier> trees;
-    private double sampleRatio; // what fraction of samples to use for each tree
-    private double featureRatio; // what fraction of features to consider for splits
+    private int maxDepth;
+    private int minSamplesSplit;
+    private int minSamplesLeaf;
+    private double maxFeaturesRatio;
+    private List<DecisionTreeClassifier> trees;
+    private double sampleRatio; // Ratio of samples to use for bootstrap
 
-    public RandomForestClassifier(int numTrees, int numClasses, double sampleRatio, double featureRatio) {
+    public RandomForestClassifier(int numTrees, int numClasses, int maxDepth, int minSamplesSplit, int minSamplesLeaf, double maxFeaturesRatio, double sampleRatio) {
         this.numTrees = numTrees;
         this.numClasses = numClasses;
+        this.maxDepth = maxDepth;
+        this.minSamplesSplit = minSamplesSplit;
+        this.minSamplesLeaf = minSamplesLeaf;
+        this.maxFeaturesRatio = maxFeaturesRatio;
         this.sampleRatio = sampleRatio;
-        this.featureRatio = featureRatio;
-        this.trees = new java.util.ArrayList<>();
     }
 
     @Override
     public void train(int[][] features, int[] labels) {
-        trees.clear();
+        trees = new ArrayList<>();
         int n = features.length;
         int d = features[0].length;
         int sampleSize = (int) (n * sampleRatio);
-        int featureCount = (int) (d * featureRatio);
+        int maxFeatures = (int) (d * maxFeaturesRatio);
 
-        java.util.Random rand = new java.util.Random();
+        Random rand = new Random();
 
         for (int t = 0; t < numTrees; t++) {
-            // Bootstrap sample
             int[][] sampledFeatures = new int[sampleSize][d];
             int[] sampledLabels = new int[sampleSize];
+
+            // Bootstrap sampling
             for (int i = 0; i < sampleSize; i++) {
                 int idx = rand.nextInt(n);
                 sampledFeatures[i] = features[idx];
                 sampledLabels[i] = labels[idx];
             }
 
-            // We could limit features here by randomly selecting a subset of features,
-            // but since our tree is a stump that tries random features anyway, we rely on that randomness.
-            // Or we can pre-prune features:
-            // For simplicity, we'll rely on decision stump's internal random selection of features.
-
-            SimpleDecisionTreeClassifier stump = new SimpleDecisionTreeClassifier(numClasses);
-            stump.train(sampledFeatures, sampledLabels);
-            trees.add(stump);
+            DecisionTreeClassifier tree = new DecisionTreeClassifier(numClasses, maxDepth, minSamplesSplit, minSamplesLeaf, maxFeatures, rand);
+            tree.train(sampledFeatures, sampledLabels);
+            trees.add(tree);
         }
     }
 
     @Override
     public int predict(int[] sample) {
-        // Majority vote among all trees
-        java.util.Map<Integer, Integer> counts = new java.util.HashMap<>();
-        for (SimpleDecisionTreeClassifier tree : trees) {
-            int p = tree.predict(sample);
-            counts.put(p, counts.getOrDefault(p, 0) + 1);
+        // Aggregate predictions from all trees
+        int[] classCounts = new int[numClasses];
+        for (DecisionTreeClassifier tree : trees) {
+            int prediction = tree.predict(sample);
+            classCounts[prediction]++;
         }
 
-        int majorityClass = -1;
-        int maxCount = -1;
-        for (java.util.Map.Entry<Integer, Integer> entry : counts.entrySet()) {
-            if (entry.getValue() > maxCount) {
-                maxCount = entry.getValue();
-                majorityClass = entry.getKey();
+        // Majority vote
+        int bestClass = 0;
+        int bestCount = classCounts[0];
+        for (int c = 1; c < numClasses; c++) {
+            if (classCounts[c] > bestCount) {
+                bestCount = classCounts[c];
+                bestClass = c;
             }
         }
-        return majorityClass;
+        return bestClass;
     }
 }
