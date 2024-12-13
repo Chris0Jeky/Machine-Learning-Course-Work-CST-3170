@@ -21,6 +21,7 @@ public class Main {
             String[] classifierNames = {"Nearest Neighbor"};
             double[][] accuracies = new double[classifierNames.length][2];
 
+            // Two-fold testing: first fold trains on dataSet1, tests on dataSet2; second fold reverses it.
             for (int fold = 0; fold < 2; fold++) {
                 System.out.println("\n=== Fold " + (fold + 1) + " ===");
 
@@ -42,6 +43,7 @@ public class Main {
                 Classifier nn = new NearestNeighborClassifier();
                 Classifier[] classifiers = {nn};
 
+                // Evaluate each classifier in this experiment
                 for (int i = 0; i < classifiers.length; i++) {
                     System.out.println("\nTraining " + classifierNames[i] + "...");
                     long startTime = System.currentTimeMillis();
@@ -52,6 +54,7 @@ public class Main {
                     System.out.println("Evaluating " + classifierNames[i] + "...");
                     int correctPredictions = 0;
                     startTime = System.currentTimeMillis();
+                    // Test the classifier on the test set
                     for (int j = 0; j < testFeatures.length; j++) {
                         int predictedLabel = classifiers[i].predict(testFeatures[j]);
                         if (predictedLabel == testLabels[j]) {
@@ -93,6 +96,7 @@ public class Main {
             String[] classifierNames = {"Weighted k-NN"};
             double[][] accuracies = new double[classifierNames.length][2];
 
+            // Two-fold cross-validation again
             for (int fold = 0; fold < 2; fold++) {
                 System.out.println("\n=== Fold " + (fold + 1) + " ===");
                 int[][] trainFeatures, testFeatures;
@@ -110,7 +114,8 @@ public class Main {
                     testLabels = labels1;
                 }
 
-                Classifier weightedKnn = new WeightedKNearestNeighborsClassifier(1, numClasses);
+                // Weighted k-NN with k=4 here just as a placeholder, could try different ks (although 4 seems to work best)
+                Classifier weightedKnn = new WeightedKNearestNeighborsClassifier(4, numClasses);
                 Classifier[] classifiers = {weightedKnn};
 
                 for (int i = 0; i < classifiers.length; i++) {
@@ -123,6 +128,7 @@ public class Main {
                     System.out.println("Evaluating " + classifierNames[i] + "...");
                     int correctPredictions = 0;
                     startTime = System.currentTimeMillis();
+                    // Evaluate on test set
                     for (int j = 0; j < testFeatures.length; j++) {
                         int predictedLabel = classifiers[i].predict(testFeatures[j]);
                         if (predictedLabel == testLabels[j]) {
@@ -163,6 +169,7 @@ public class Main {
             String[] classifierNames = {"MLP"};
             double[][] accuracies = new double[classifierNames.length][2];
 
+            // Two-fold test again
             for (int fold = 0; fold < 2; fold++) {
                 System.out.println("\n=== Fold " + (fold + 1) + " ===");
                 int[][] trainFeatures, testFeatures;
@@ -181,6 +188,7 @@ public class Main {
                 }
 
                 int featureSize = trainFeatures[0].length;
+                // MLP with a hidden layer of 100, output = numClasses
                 Classifier mlp = new MLPClassifier(featureSize, 100, numClasses, 0.002, 100);
 
                 Classifier[] classifiers = {mlp};
@@ -252,6 +260,7 @@ public class Main {
                     testLabels = labels1;
                 }
 
+                // Compute centroids and add as extra features
                 double[][] centroids = Utils.computeCentroids(trainFeatures, trainLabels, numClasses);
                 trainFeatures = Utils.addCentroidFeatures(trainFeatures, centroids);
                 testFeatures = Utils.addCentroidFeatures(testFeatures, centroids);
@@ -332,6 +341,7 @@ public class Main {
                 Classifier nn = new NearestNeighborClassifier();
                 Classifier mlp = new MLPClassifier(featureSize, 100, numClasses, 0.002, 100);
                 double threshold = 20.0;
+                // Hybrid: If NN distance > threshold, fallback to MLP
                 Classifier hybrid = new HybridClassifier((NearestNeighborClassifier) nn, mlp, threshold);
 
                 // Train NN and MLP first
@@ -409,6 +419,7 @@ public class Main {
                 int featureSize = trainFeatures[0].length;
 
                 // Initialize individual classifiers
+                // Voting ensemble of NN, MLP, and WeightedKNN
                 Classifier nn = new NearestNeighborClassifier();
                 Classifier mlp = new MLPClassifier(featureSize, 100, numClasses, 0.002, 100);
                 Classifier weightedKnn = new WeightedKNearestNeighborsClassifier(3, numClasses);
@@ -448,6 +459,8 @@ public class Main {
                 System.out.println(classifierNames[i] + " Average Accuracy: " + averageAccuracy + "%");
             }
         }
+        // The experiment below is commented out, but could be re-enabled when needed.
+        // It's commented out because it takes too long to run, and the accurancy is not that high.
 
         // ------------------------------------------------------------
         // EXPERIMENT: Multiclass Kernel SVM with Linear or RBF Kernel
