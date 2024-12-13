@@ -52,14 +52,19 @@ public class Main {
                     System.out.println(classifierNames[i] + " training took: " + (endTime - startTime) + " ms");
 
                     System.out.println("Evaluating " + classifierNames[i] + "...");
+
+                    int[][] confusionMatrix = new int[numClasses][numClasses];
+
                     int correctPredictions = 0;
                     startTime = System.currentTimeMillis();
                     // Test the classifier on the test set
                     for (int j = 0; j < testFeatures.length; j++) {
                         int predictedLabel = classifiers[i].predict(testFeatures[j]);
+                        int actualLabel = testLabels[j];
                         if (predictedLabel == testLabels[j]) {
                             correctPredictions++;
                         }
+                        confusionMatrix[actualLabel][predictedLabel]++;
                     }
                     endTime = System.currentTimeMillis();
                     System.out.println(classifierNames[i] + " evaluation took: " + (endTime - startTime) + " ms");
@@ -67,6 +72,14 @@ public class Main {
                     double accuracy = (double) correctPredictions / testFeatures.length * 100;
                     accuracies[i][fold] = accuracy;
                     System.out.println(classifierNames[i] + " Accuracy: " + accuracy + "%");
+
+                    System.out.println("Confusion Matrix for " + classifierNames[i] + ":");
+                    for (int a = 0; a < numClasses; a++) {
+                        for (int p = 0; p < numClasses; p++) {
+                            System.out.print(confusionMatrix[a][p] + " ");
+                        }
+                        System.out.println();
+                    }
                 }
             }
 
