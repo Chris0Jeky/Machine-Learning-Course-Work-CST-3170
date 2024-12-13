@@ -1,4 +1,7 @@
 public class MLPClassifier implements Classifier {
+    // A simple Multi-Layer Perceptron (MLP) classifier with a single hidden layer.
+    // Uses softmax output layer and cross-entropy loss for multi-class classification.
+
     private int inputSize;
     private int hiddenSize;
     private int outputSize;
@@ -18,6 +21,7 @@ public class MLPClassifier implements Classifier {
         initWeights();
     }
 
+    // Initialize all weights and biases with small random values.
     private void initWeights() {
         W1 = new double[hiddenSize][inputSize];
         b1 = new double[hiddenSize];
@@ -41,12 +45,13 @@ public class MLPClassifier implements Classifier {
     @Override
     public void train(int[][] features, int[] labels) {
         int n = features.length;
+        // For multiple epochs, run through all samples and update weights via backpropagation.
         for (int epoch = 0; epoch < epochs; epoch++) {
             for (int i = 0; i < n; i++) {
                 double[] x = toDouble(features[i]);
                 int y = labels[i];
 
-                // Forward pass
+                // Forward pass: input -> hidden
                 double[] h = new double[hiddenSize];
                 for (int hh = 0; hh < hiddenSize; hh++) {
                     double sum = b1[hh];
@@ -55,7 +60,7 @@ public class MLPClassifier implements Classifier {
                     }
                     h[hh] = relu(sum);
                 }
-
+                // Forward pass: hidden -> output
                 double[] o = new double[outputSize];
                 for (int oo = 0; oo < outputSize; oo++) {
                     double sum = b2[oo];
@@ -67,15 +72,14 @@ public class MLPClassifier implements Classifier {
 
                 double[] probs = softmax(o);
 
-                // Compute gradients w.r.t output (Cross-entropy + softmax)
-                // One-hot encoding for y
+                // Compute output layer delta: deltaO = probs - one_hot(y)
                 double[] deltaO = new double[outputSize];
                 for (int oo = 0; oo < outputSize; oo++) {
                     deltaO[oo] = probs[oo];
                 }
                 deltaO[y] -= 1.0;
 
-                // Backprop to W2, b2
+                // Compute gradients for W2 and b2
                 double[][] gradW2 = new double[outputSize][hiddenSize];
                 double[] gradb2 = new double[outputSize];
                 for (int oo = 0; oo < outputSize; oo++) {
@@ -85,17 +89,18 @@ public class MLPClassifier implements Classifier {
                     gradb2[oo] = deltaO[oo];
                 }
 
-                // Backprop to hidden
+                // Compute delta for hidden layer: deltaH
                 double[] deltaH = new double[hiddenSize];
                 for (int hh2 = 0; hh2 < hiddenSize; hh2++) {
                     double sum = 0.0;
                     for (int oo = 0; oo < outputSize; oo++) {
                         sum += deltaO[oo] * W2[oo][hh2];
                     }
+                    // ReLU derivative: pass gradient if h>0, else 0
                     deltaH[hh2] = (h[hh2] > 0 ? sum : 0); // derivative of ReLU
                 }
 
-                // Backprop to W1, b1
+                // Compute gradients for W1 and b1
                 double[][] gradW1 = new double[hiddenSize][inputSize];
                 double[] gradb1 = new double[hiddenSize];
                 for (int hh2 = 0; hh2 < hiddenSize; hh2++) {
@@ -105,7 +110,7 @@ public class MLPClassifier implements Classifier {
                     gradb1[hh2] = deltaH[hh2];
                 }
 
-                // Update weights
+                // Update all weights and biases
                 for (int hh2 = 0; hh2 < hiddenSize; hh2++) {
                     for (int jj = 0; jj < inputSize; jj++) {
                         W1[hh2][jj] -= learningRate * gradW1[hh2][jj];
@@ -126,6 +131,7 @@ public class MLPClassifier implements Classifier {
     @Override
     public int predict(int[] sample) {
         double[] x = toDouble(sample);
+        // Single forward pass for prediction
 
         double[] h = new double[hiddenSize];
         for (int hh = 0; hh < hiddenSize; hh++) {
@@ -144,21 +150,25 @@ public class MLPClassifier implements Classifier {
             }
             o[oo] = sum;
         }
+        // The predicted class is the argmax of the output scores (before softmax)
 
         int pred = argMax(o);
         return pred;
     }
 
+    // Convert int array to double array for calculations
     private double[] toDouble(int[] arr) {
         double[] res = new double[arr.length];
         for (int i = 0; i < arr.length; i++) res[i] = arr[i];
         return res;
     }
 
+    // ReLU activation function
     private double relu(double x) {
         return x > 0 ? x : 0;
     }
 
+    // Softmax normalization for probability outputs
     private double[] softmax(double[] x) {
         double max = Double.NEGATIVE_INFINITY;
         for (double v : x) {
@@ -175,6 +185,7 @@ public class MLPClassifier implements Classifier {
         return out;
     }
 
+    // Find index of maximum value in array (for class prediction)
     private int argMax(double[] arr) {
         int idx = 0;
         double max = arr[0];
