@@ -484,8 +484,8 @@ public class Main {
                     testLabels = labels1;
                 }
 
-                Kernel rbf = new RBFKernel(0.05);
-                Classifier kernelSvm = new MulticlassKernelSVMClassifier(1.0, 0.001, 5, rbf, numClasses);
+                Kernel linearKernel = new LinearKernel();
+                Classifier kernelSvm = new MulticlassKernelSVMClassifier(1.0, 0.001, 5, linearKernel, numClasses);
 
                 Classifier[] classifiers = {kernelSvm};
 
