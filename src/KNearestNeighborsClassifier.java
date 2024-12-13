@@ -1,4 +1,6 @@
 public class KNearestNeighborsClassifier implements Classifier {
+    // A basic k-NN classifier without fancy data structures.
+    // Distances are computed at prediction time, sorted, and the majority label chosen.
     private int[][] trainingFeatures;
     private int[] trainingLabels;
     private int k;
@@ -11,6 +13,7 @@ public class KNearestNeighborsClassifier implements Classifier {
 
     @Override
     public void train(int[][] features, int[] labels) {
+        // Just store training data, no actual model training for k-NN.
         this.trainingFeatures = features;
         this.trainingLabels = labels;
     }
@@ -21,13 +24,13 @@ public class KNearestNeighborsClassifier implements Classifier {
         double[] distances = new double[n];
         int[] labels = new int[n];
 
-        // Compute distances
+        // Compute distances to all training samples
         for (int i = 0; i < n; i++) {
             distances[i] = DistanceCalculator.euclideanDistance(testImage, trainingFeatures[i]);
             labels[i] = trainingLabels[i];
         }
 
-        // Sort distances and labels together using selection sort
+        // Selection sort for the first k neighbors
         for (int i = 0; i < k; i++) {
             // Find the index of the minimum distance
             int minIndex = i;
@@ -36,7 +39,7 @@ public class KNearestNeighborsClassifier implements Classifier {
                     minIndex = j;
                 }
             }
-            // Swap distances[i] and distances[minIndex]
+            // Swap to bring nearest neighbor into top k range
             double tempDist = distances[i];
             distances[i] = distances[minIndex];
             distances[minIndex] = tempDist;
@@ -47,7 +50,7 @@ public class KNearestNeighborsClassifier implements Classifier {
             labels[minIndex] = tempLabel;
         }
 
-        // Count labels in the first k entries
+        // Count occurrences among the k nearest
         int[] labelCounts = new int[numClasses];
         for (int i = 0; i < k; i++) {
             int label = labels[i];
@@ -58,7 +61,7 @@ public class KNearestNeighborsClassifier implements Classifier {
             }
         }
 
-        // Find the label with the highest count
+        // Determine class with maximum count
         int predictedLabel = -1;
         int maxCount = -1;
         for (int i = 0; i < numClasses; i++) {
@@ -68,7 +71,7 @@ public class KNearestNeighborsClassifier implements Classifier {
             }
         }
 
-        // Handle ties
+        // If tie, choose label with smallest cumulative distance among tied labels
         int numMaxLabels = 0;
         for (int i = 0; i < numClasses; i++) {
             if (labelCounts[i] == maxCount) {
