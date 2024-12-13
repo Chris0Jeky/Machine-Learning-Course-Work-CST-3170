@@ -1,13 +1,13 @@
 import java.util.*;
 
 public class RandomForestClassifier implements Classifier {
-    private int numTrees;
-    private int numClasses;
-    private int maxDepth;
-    private int minSamplesSplit;
-    private int minSamplesLeaf;
-    private double maxFeaturesRatio;
-    private List<DecisionTreeClassifier> trees;
+    private int numTrees;  // Number of decision trees in the forest
+    private int numClasses; // Number of classes for classification
+    private int maxDepth; // Maximum depth of each decision tree
+    private int minSamplesSplit; // Minimum number of samples required to split a node
+    private int minSamplesLeaf; // Minimum number of samples required to form a leaf node
+    private double maxFeaturesRatio; // Ratio of features to consider when looking for the best split
+    private List<DecisionTreeClassifier> trees; // List to store all the decision trees in the forest
     private double sampleRatio; // Ratio of samples to use for bootstrap
 
     public RandomForestClassifier(int numTrees, int numClasses, int maxDepth, int minSamplesSplit, int minSamplesLeaf, double maxFeaturesRatio, double sampleRatio) {
