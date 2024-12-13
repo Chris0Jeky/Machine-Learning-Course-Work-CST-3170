@@ -1,5 +1,8 @@
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Collections;
+import java.util.Arrays;
 
 class DecisionTreeClassifier implements Classifier {
     private int numClasses;

@@ -561,7 +561,15 @@ public class Main {
                 // Let's say we want 10 trees, each stump tries random features internally.
                 // We'll use a sampleRatio = 1.0 (bootstrap same size as dataset), featureRatio = 1.0
                 // since we rely on stump randomness.
-                Classifier rf = new RandomForestClassifier(10, numClasses, 1.0, 1.0);
+                Classifier rf = new RandomForestClassifier(
+                        10,        // numTrees
+                        numClasses,
+                        5,         // maxDepth
+                        2,         // minSamplesSplit
+                        1,         // minSamplesLeaf
+                        0.5,       // maxFeaturesRatio
+                        1.0        // sampleRatio
+                );
                 Classifier[] classifiers = {rf};
 
                 for (int i = 0; i < classifiers.length; i++) {
