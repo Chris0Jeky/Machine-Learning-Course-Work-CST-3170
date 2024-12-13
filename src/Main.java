@@ -367,6 +367,88 @@ public class Main {
             }
         }
 
+        // ------------------------------------------------------------
+        // EXPERIMENT: Simple Voting Classifier
+        // ------------------------------------------------------------
+        {
+            System.out.println("\n=== Experiment: Simple Voting Classifier ===");
+
+            // Reload datasets for a clean test
+            int[][] dataSet1 = DataLoader.loadData("datasets/dataSet1.csv");
+            int[][] dataSet2 = DataLoader.loadData("datasets/dataSet2.csv");
+
+            int[][] features1 = Utils.extractFeatures(dataSet1);
+            int[] labels1 = Utils.extractLabels(dataSet1);
+            int[][] features2 = Utils.extractFeatures(dataSet2);
+            int[] labels2 = Utils.extractLabels(dataSet2);
+
+            int numClasses = Utils.getMaxLabel(labels1, labels2) + 1;
+
+            // Let's combine 3 classifiers: NearestNeighbor, MLP, WeightedKNN
+            String[] classifierNames = {"Simple Voting Classifier"};
+            double[][] accuracies = new double[classifierNames.length][2];
+
+            for (int fold = 0; fold < 2; fold++) {
+                System.out.println("\n=== Fold " + (fold + 1) + " ===");
+
+                int[][] trainFeatures, testFeatures;
+                int[] trainLabels, testLabels;
+
+                if (fold == 0) {
+                    trainFeatures = features1;
+                    trainLabels = labels1;
+                    testFeatures = features2;
+                    testLabels = labels2;
+                } else {
+                    trainFeatures = features2;
+                    trainLabels = labels2;
+                    testFeatures = features1;
+                    testLabels = labels1;
+                }
+
+                int featureSize = trainFeatures[0].length;
+
+                // Initialize individual classifiers
+                Classifier nn = new NearestNeighborClassifier();
+                Classifier mlp = new MLPClassifier(featureSize, 100, numClasses, 0.002, 100);
+                Classifier weightedKnn = new WeightedKNearestNeighborsClassifier(3, numClasses);
+
+                // Train each classifier individually
+                System.out.println("\nTraining base classifiers for voting...");
+                long startTime = System.currentTimeMillis();
+                nn.train(trainFeatures, trainLabels);
+                mlp.train(trainFeatures, trainLabels);
+                weightedKnn.train(trainFeatures, trainLabels);
+                long endTime = System.currentTimeMillis();
+                System.out.println("Base classifiers training took: " + (endTime - startTime) + " ms");
+
+                // Create a SimpleVotingClassifier with these base classifiers
+                Classifier voting = new SimpleVotingClassifier(new Classifier[]{nn, mlp, weightedKnn});
+
+                System.out.println("\nEvaluating " + classifierNames[0] + "...");
+                int correctPredictions = 0;
+                startTime = System.currentTimeMillis();
+                for (int j = 0; j < testFeatures.length; j++) {
+                    int predictedLabel = voting.predict(testFeatures[j]);
+                    if (predictedLabel == testLabels[j]) {
+                        correctPredictions++;
+                    }
+                }
+                endTime = System.currentTimeMillis();
+                System.out.println(classifierNames[0] + " evaluation took: " + (endTime - startTime) + " ms");
+
+                double accuracy = (double) correctPredictions / testFeatures.length * 100;
+                accuracies[0][fold] = accuracy;
+                System.out.println(classifierNames[0] + " Accuracy: " + accuracy + "%");
+            }
+
+            System.out.println("\n=== Average Accuracies ===");
+            for (int i = 0; i < classifierNames.length; i++) {
+                double averageAccuracy = (accuracies[i][0] + accuracies[i][1]) / 2;
+                System.out.println(classifierNames[i] + " Average Accuracy: " + averageAccuracy + "%");
+            }
+        }
+
         System.out.println("\nAll experiments completed successfully!");
     }
 }
