@@ -1,3 +1,4 @@
+import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
@@ -8,32 +9,38 @@ class GradientTree {
     private int maxDepth;
     private int minSamplesLeaf;
     private int minSamplesSplit;
-    private boolean secondOrder;
-    private double lambda;
+    private double lambda; // L2 reg on leaf
+    private double gamma;  // min split loss reduction
+    private double maxFeaturesRatio;
+    private boolean secondOrder; // if true, we use hessians
 
-    public GradientTree(int maxDepth, int minSamplesLeaf, int minSamplesSplit, boolean secondOrder, double lambda) {
+    private Random rand;
+
+    public GradientTree(int maxDepth, int minSamplesLeaf, int minSamplesSplit, double lambda, double gamma, double maxFeaturesRatio, boolean secondOrder) {
         this.maxDepth = maxDepth;
         this.minSamplesLeaf = minSamplesLeaf;
         this.minSamplesSplit = minSamplesSplit;
-        this.secondOrder = secondOrder;
         this.lambda = lambda;
+        this.gamma = gamma;
+        this.maxFeaturesRatio = maxFeaturesRatio;
+        this.secondOrder = secondOrder;
+        this.rand = new Random();
     }
 
-    public void train(int[][] features, double[] gradients) {
+    public void train(int[][] features, double[] gradients, double[] hessians) {
         List<Integer> indices = new ArrayList<>();
         for (int i = 0; i < gradients.length; i++) indices.add(i);
-
-        root = buildNode(features, gradients, indices, 0);
+        root = buildNode(features, gradients, hessians, indices, 0);
     }
 
-    private Node buildNode(int[][] features, double[] gradients, List<Integer> indices, int depth) {
+    private Node buildNode(int[][] features, double[] gradients, double[] hessians, List<Integer> indices, int depth) {
         if (depth >= maxDepth || indices.size() < minSamplesSplit) {
-            return createLeaf(gradients, indices);
+            return createLeaf(gradients, hessians, indices);
         }
 
-        Split best = findBestSplit(features, gradients, indices);
-        if (best == null) {
-            return createLeaf(gradients, indices);
+        Split best = findBestSplit(features, gradients, hessians, indices);
+        if (best == null || best.gain < gamma) {
+            return createLeaf(gradients, hessians, indices);
         }
 
         List<Integer> leftIdx = new ArrayList<>();
@@ -44,96 +51,83 @@ class GradientTree {
         }
 
         if (leftIdx.size() < minSamplesLeaf || rightIdx.size() < minSamplesLeaf) {
-            return createLeaf(gradients, indices);
+            return createLeaf(gradients, hessians, indices);
         }
 
         Node node = new Node();
         node.feature = best.feature;
         node.threshold = best.threshold;
-        node.left = buildNode(features, gradients, leftIdx, depth + 1);
-        node.right = buildNode(features, gradients, rightIdx, depth + 1);
         node.isLeaf = false;
+        node.left = buildNode(features, gradients, hessians, leftIdx, depth + 1);
+        node.right = buildNode(features, gradients, hessians, rightIdx, depth + 1);
         return node;
     }
 
-    private Node createLeaf(double[] gradients, List<Integer> indices) {
+    private Node createLeaf(double[] gradients, double[] hessians, List<Integer> indices) {
         Node leaf = new Node();
         leaf.isLeaf = true;
 
-        double sumGrad = 0.0;
-        for (int i : indices) sumGrad += gradients[i];
+        double sumG = 0.0;
+        double sumH = 0.0;
+        for (int i : indices) {
+            sumG += gradients[i];
+            sumH += hessians[i];
+        }
 
-        // First-order leaf value = average negative gradient
-        double leafValue = -sumGrad / (indices.size());
-        // If secondOrder, would involve Hessians and lambda.
-
+        // Leaf value for second-order:
+        // leafValue = - sumG / (sumH + lambda)
+        double leafValue = -sumG / (sumH + lambda);
         leaf.value = leafValue;
+
         return leaf;
     }
 
-    private Split findBestSplit(int[][] features, double[] gradients, List<Integer> indices) {
+    private Split findBestSplit(int[][] features, double[] gradients, double[] hessians, List<Integer> indices) {
         int n = indices.size();
         int d = features[0].length;
+        int maxFeatures = (int)(d * maxFeaturesRatio);
 
-        // We'll pick best split by variance reduction on gradients
-        double sumAll = 0.0;
-        for (int i : indices) sumAll += gradients[i];
-        double meanAll = sumAll / n;
-        double baseVar = 0.0;
+        // Compute total stats
+        double sumG = 0.0, sumH = 0.0;
         for (int i : indices) {
-            double diff = gradients[i] - meanAll;
-            baseVar += diff * diff;
+            sumG += gradients[i];
+            sumH += hessians[i];
         }
+        double baseScore = leafScore(sumG, sumH, lambda);
+        // We'll try to find a split that increases the gain: gain = leftScore + rightScore - baseScore
+
+        // Random subset of features
+        List<Integer> candidateFeatures = new ArrayList<>();
+        for (int f = 0; f < d; f++) candidateFeatures.add(f);
+        Collections.shuffle(candidateFeatures, rand);
+        candidateFeatures = candidateFeatures.subList(0, Math.min(maxFeatures, d));
 
         double bestGain = 0.0;
         Split best = null;
-        Random rand = new Random();
 
-        // Try all features or a subset:
-        // For simplicity, try a few random features:
-        int featureTries = Math.min(d, 10);
-        for (int t = 0; t < featureTries; t++) {
-            int f = rand.nextInt(d);
-
+        for (int f : candidateFeatures) {
             // Sort indices by feature f
             indices.sort((a,b) -> Integer.compare(features[a][f], features[b][f]));
 
-            double leftSum = 0.0;
-            int leftCount = 0;
-
-            // Try splits between distinct feature values
+            double leftG = 0.0, leftH = 0.0;
             for (int i = 0; i < n - 1; i++) {
                 int idx = indices.get(i);
-                leftSum += gradients[idx];
-                leftCount++;
-                if (features[indices.get(i)][f] == features[indices.get(i+1)][f]) {
-                    continue;
-                }
+                leftG += gradients[idx];
+                leftH += hessians[idx];
 
-                int leftSize = leftCount;
+                if (features[indices.get(i)][f] == features[indices.get(i+1)][f]) continue;
+
+                int leftSize = i+1;
                 int rightSize = n - leftSize;
                 if (leftSize < minSamplesLeaf || rightSize < minSamplesLeaf) continue;
 
-                double rightSum = sumAll - leftSum;
-                double leftMean = leftSum / leftSize;
-                double rightMean = rightSum / rightSize;
+                double rightG = sumG - leftG;
+                double rightH = sumH - leftH;
 
-                double leftVar = 0.0;
-                double rightVar = 0.0;
-                // For a more efficient code, precompute prefix sums of squared gradients or just sum of gradients,
-                // but here we do brute force:
-                for (int j = 0; j < leftSize; j++) {
-                    int idL = indices.get(j);
-                    double diff = gradients[idL] - leftMean;
-                    leftVar += diff*diff;
-                }
-                for (int k = leftSize; k < n; k++) {
-                    int idR = indices.get(k);
-                    double diff = gradients[idR] - rightMean;
-                    rightVar += diff*diff;
-                }
+                double leftScore = leafScore(leftG, leftH, lambda);
+                double rightScore = leafScore(rightG, rightH, lambda);
+                double gain = leftScore + rightScore - baseScore;
 
-                double gain = baseVar - (leftVar + rightVar);
                 if (gain > bestGain) {
                     bestGain = gain;
                     Split s = new Split();
@@ -146,6 +140,11 @@ class GradientTree {
         }
 
         return best;
+    }
+
+    private double leafScore(double sumG, double sumH, double lambda) {
+        // (-(sumG)^2) / (sumH + lambda) is basically the gain formula's leaf part
+        return -(sumG * sumG) / (sumH + lambda);
     }
 
     public double predict(int[] sample) {
@@ -171,3 +170,4 @@ class GradientTree {
         double gain;
     }
 }
+
