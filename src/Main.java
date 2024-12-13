@@ -603,6 +603,73 @@ public class Main {
                 System.out.println(classifierNames[i] + " Average Accuracy: " + averageAccuracy + "%");
             }
         }
+
+        // ------------------------------------------------------------
+// EXPERIMENT: Multi-class Gradient Boosted Trees with Softmax
+// ------------------------------------------------------------
+        {
+            System.out.println("\n=== Experiment: Multi-class Gradient Boosted Trees ===");
+
+            int[][] dataSet1 = DataLoader.loadData("datasets/dataSet1.csv");
+            int[][] dataSet2 = DataLoader.loadData("datasets/dataSet2.csv");
+
+            int[][] features1 = Utils.extractFeatures(dataSet1);
+            int[] labels1 = Utils.extractLabels(dataSet1);
+            int[][] features2 = Utils.extractFeatures(dataSet2);
+            int[] labels2 = Utils.extractLabels(dataSet2);
+
+            int numClasses = Utils.getMaxLabel(labels1, labels2) + 1;
+
+            String[] classifierNames = {"Multi-class GBT"};
+            double[][] accuracies = new double[classifierNames.length][2];
+
+            for (int fold = 0; fold < 2; fold++) {
+                System.out.println("\n=== Fold " + (fold + 1) + " ===");
+                int[][] trainFeatures, testFeatures;
+                int[] trainLabels, testLabels;
+                if (fold == 0) {
+                    trainFeatures = features1;
+                    trainLabels = labels1;
+                    testFeatures = features2;
+                    testLabels = labels2;
+                } else {
+                    trainFeatures = features2;
+                    trainLabels = labels2;
+                    testFeatures = features1;
+                    testLabels = labels1;
+                }
+
+                // Choose parameters
+                MultiClassGradientBoostedTreesClassifier mcGBT = new MultiClassGradientBoostedTreesClassifier(
+                        numClasses,
+                        50,    // numTrees
+                        0.1,   // eta
+                        3,     // maxDepth
+                        5,     // minSamplesLeaf
+                        10,    // minSamplesSplit
+                        1.0    // lambda (regularization)
+                );
+
+                mcGBT.train(trainFeatures, trainLabels);
+
+                int correctPredictions = 0;
+                for (int i = 0; i < testFeatures.length; i++) {
+                    int pred = mcGBT.predict(testFeatures[i]);
+                    if (pred == testLabels[i]) correctPredictions++;
+                }
+
+                double accuracy = (double)correctPredictions / testFeatures.length * 100;
+                accuracies[0][fold] = accuracy;
+                System.out.println(classifierNames[0] + " Accuracy: " + accuracy + "%");
+            }
+
+            System.out.println("\n=== Average Accuracies ===");
+            for (int i = 0; i < classifierNames.length; i++) {
+                double averageAccuracy = (accuracies[i][0] + accuracies[i][1]) / 2;
+                System.out.println(classifierNames[i] + " Average Accuracy: " + averageAccuracy + "%");
+            }
+        }
+        
         System.out.println("\nAll experiments completed successfully!");
     }
 }
