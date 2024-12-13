@@ -605,8 +605,8 @@ public class Main {
         }
 
         // ------------------------------------------------------------
-// EXPERIMENT: Multi-class Gradient Boosted Trees with Softmax
-// ------------------------------------------------------------
+        // EXPERIMENT: Multi-class Gradient Boosted Trees with Softmax
+        // ------------------------------------------------------------
         {
             System.out.println("\n=== Experiment: Multi-class Gradient Boosted Trees ===");
 
