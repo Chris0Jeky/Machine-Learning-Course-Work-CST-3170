@@ -5,7 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="129c38f8-a1ea-40f6-9ede-22af183637a6" name="Changes" comment="Initial Commit">
+      <change afterPath="$PROJECT_DIR$/src/Kernel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/KernelSVMClassifier.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/LinearKernel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/RBFKernel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MulticlassSVMClassifier.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,6 +21,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -110,7 +117,7 @@
       <workItem from="1732707598904" duration="595000" />
       <workItem from="1732716417872" duration="6604000" />
       <workItem from="1733248019599" duration="569000" />
-      <workItem from="1734023593082" duration="16856000" />
+      <workItem from="1734023593082" duration="18524000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <created>1728483609094</created>
