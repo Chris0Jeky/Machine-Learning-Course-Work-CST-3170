@@ -647,8 +647,11 @@ public class Main {
                         3,     // maxDepth
                         5,     // minSamplesLeaf
                         10,    // minSamplesSplit
-                        1.0    // lambda (regularization)
+                        1.0,   // lambda
+                        0.0,   // gamma (try 0.0 as default)
+                        1.0    // maxFeaturesRatio (try 1.0 to use all features)
                 );
+
 
                 mcGBT.train(trainFeatures, trainLabels);
 
