@@ -1,24 +1,62 @@
 public class SimpleVotingClassifier implements Classifier {
-    private Classifier c1;
-    private Classifier c2;
+    private Classifier[] classifiers;
 
-    public SimpleVotingClassifier(Classifier c1, Classifier c2) {
-        this.c1 = c1;
-        this.c2 = c2;
+    public SimpleVotingClassifier(Classifier[] classifiers) {
+        this.classifiers = classifiers;
     }
 
     @Override
     public void train(int[][] features, int[] labels) {
-        c1.train(features, labels);
-        c2.train(features, labels);
+        // Train all classifiers
+        for (Classifier c : classifiers) {
+            c.train(features, labels);
+        }
     }
 
     @Override
     public int predict(int[] sample) {
-        int p1 = c1.predict(sample);
-        int p2 = c2.predict(sample);
-        // Simple majority voting for two classifiers:
-        // If they disagree, just pick one (or add a third classifier for tie-break)
-        return (p1 == p2) ? p1 : p1; // or p2, or use distance-based tie-breaking
+        // Count votes for each predicted class
+        // First, we need to know how many classes we have, or we can just map predictions to counts
+        // If we know numClasses from outside, we could create an array of counts, but it's easier just to store predictions and pick majority.
+
+        // If we don't know numClasses here, let's just use a hashmap-like approach with arrays since we know labels range from 0..numClasses-1.
+        // Alternatively, we can assume a reasonable max number of classes or find max label after predictions.
+        // For simplicity, let's just store predictions and find the majority by counting.
+
+        // Gather predictions
+        int[] predictions = new int[classifiers.length];
+        for (int i = 0; i < classifiers.length; i++) {
+            predictions[i] = classifiers[i].predict(sample);
+        }
+
+        // Find majority vote
+        // Since we don't know the range of classes directly here, we can map out each prediction count.
+        // A simple approach: find the class that occurs most often in predictions.
+
+        int majorityVote = majorityElement(predictions);
+        return majorityVote;
+    }
+
+    // Helper method to find majority element. If tie occurs, returns one of them.
+    private int majorityElement(int[] arr) {
+        // A simple way: count frequencies in a map
+        // Since classes are likely small integers, we can do a simple count:
+        // Let's assume class labels won't exceed a certain limit. For large range, you'd use a HashMap.
+        // For safety, use a HashMap:
+
+        java.util.Map<Integer, Integer> counts = new java.util.HashMap<>();
+        for (int val : arr) {
+            counts.put(val, counts.getOrDefault(val, 0) + 1);
+        }
+
+        int maxCount = -1;
+        int majority = arr[0];
+        for (java.util.Map.Entry<Integer, Integer> entry : counts.entrySet()) {
+            if (entry.getValue() > maxCount) {
+                maxCount = entry.getValue();
+                majority = entry.getKey();
+            }
+        }
+        return majority;
     }
 }
