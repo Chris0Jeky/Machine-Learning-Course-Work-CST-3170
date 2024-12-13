@@ -5,14 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="129c38f8-a1ea-40f6-9ede-22af183637a6" name="Changes" comment="Initial Commit">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MLPClassifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MLPClassifier.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MultiClassGradientBoostedTreesClassifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MultiClassGradientBoostedTreesClassifier.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MulticlassKernelSVMClassifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MulticlassKernelSVMClassifier.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MulticlassPerceptronClassifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MulticlassPerceptronClassifier.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MulticlassSVMClassifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MulticlassSVMClassifier.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/NearestNeighborClassifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/NearestNeighborClassifier.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/RandomForestClassifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/RandomForestClassifier.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
