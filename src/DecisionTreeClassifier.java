@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.Arrays;
 
 class DecisionTreeClassifier implements Classifier {
+    // A basic decision tree for classification using Gini impurity.
+    // Uses a subset of features for each split if maxFeatures < total features.
+
     private int numClasses;
     private int maxDepth;
     private int minSamplesSplit;
@@ -29,6 +32,7 @@ class DecisionTreeClassifier implements Classifier {
         root = buildNode(features, labels, indices, 0);
     }
 
+    // Recursively builds the tree by finding splits that reduce impurity.
     private Node buildNode(int[][] features, int[] labels, List<Integer> indices, int depth) {
         int n = indices.size();
         if (n == 0) return null;
