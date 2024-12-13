@@ -521,6 +521,78 @@ public class Main {
             }
         }
 
+        // ------------------------------------------------------------
+// EXPERIMENT: Random Forest (Simplified)
+// ------------------------------------------------------------
+        {
+            System.out.println("\n=== Experiment: Random Forest (Simplified) ===");
+
+            int[][] dataSet1 = DataLoader.loadData("datasets/dataSet1.csv");
+            int[][] dataSet2 = DataLoader.loadData("datasets/dataSet2.csv");
+
+            int[][] features1 = Utils.extractFeatures(dataSet1);
+            int[] labels1 = Utils.extractLabels(dataSet1);
+            int[][] features2 = Utils.extractFeatures(dataSet2);
+            int[] labels2 = Utils.extractLabels(dataSet2);
+
+            int numClasses = Utils.getMaxLabel(labels1, labels2) + 1;
+            String[] classifierNames = {"Random Forest"};
+            double[][] accuracies = new double[classifierNames.length][2];
+
+            for (int fold = 0; fold < 2; fold++) {
+                System.out.println("\n=== Fold " + (fold + 1) + " ===");
+                int[][] trainFeatures, testFeatures;
+                int[] trainLabels, testLabels;
+
+                if (fold == 0) {
+                    trainFeatures = features1;
+                    trainLabels = labels1;
+                    testFeatures = features2;
+                    testLabels = labels2;
+                } else {
+                    trainFeatures = features2;
+                    trainLabels = labels2;
+                    testFeatures = features1;
+                    testLabels = labels1;
+                }
+
+                // Let's say we want 10 trees, each stump tries random features internally.
+                // We'll use a sampleRatio = 1.0 (bootstrap same size as dataset), featureRatio = 1.0
+                // since we rely on stump randomness.
+                Classifier rf = new RandomForestClassifier(10, numClasses, 1.0, 1.0);
+                Classifier[] classifiers = {rf};
+
+                for (int i = 0; i < classifiers.length; i++) {
+                    System.out.println("\nTraining " + classifierNames[i] + "...");
+                    long startTime = System.currentTimeMillis();
+                    classifiers[i].train(trainFeatures, trainLabels);
+                    long endTime = System.currentTimeMillis();
+                    System.out.println(classifierNames[i] + " training took: " + (endTime - startTime) + " ms");
+
+                    System.out.println("Evaluating " + classifierNames[i] + "...");
+                    int correctPredictions = 0;
+                    startTime = System.currentTimeMillis();
+                    for (int j = 0; j < testFeatures.length; j++) {
+                        int predictedLabel = classifiers[i].predict(testFeatures[j]);
+                        if (predictedLabel == testLabels[j]) {
+                            correctPredictions++;
+                        }
+                    }
+                    endTime = System.currentTimeMillis();
+                    System.out.println(classifierNames[i] + " evaluation took: " + (endTime - startTime) + " ms");
+
+                    double accuracy = (double) correctPredictions / testFeatures.length * 100;
+                    accuracies[i][fold] = accuracy;
+                    System.out.println(classifierNames[i] + " Accuracy: " + accuracy + "%");
+                }
+            }
+
+            System.out.println("\n=== Average Accuracies ===");
+            for (int i = 0; i < classifierNames.length; i++) {
+                double averageAccuracy = (accuracies[i][0] + accuracies[i][1]) / 2;
+                System.out.println(classifierNames[i] + " Average Accuracy: " + averageAccuracy + "%");
+            }
+        }
         System.out.println("\nAll experiments completed successfully!");
     }
 }
