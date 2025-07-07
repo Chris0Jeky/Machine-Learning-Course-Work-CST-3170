@@ -41,3 +41,4 @@ bin/
 qodana.yaml
 /.idea
 .idea/workspace.xml
+.claude/settings.local.json
