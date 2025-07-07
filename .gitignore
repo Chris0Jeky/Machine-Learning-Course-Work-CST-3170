@@ -39,3 +39,4 @@ bin/
 .idea/workspace.xml
 /.idea
 qodana.yaml
+/.idea
