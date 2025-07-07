@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 public class Main {
     private static final String RESULTS_DIR = "results";
@@ -139,7 +140,7 @@ public class Main {
         
         // Decision Tree
         runExperiment("Decision Tree", 
-            (features, labels, numClasses) -> new DecisionTreeClassifier(numClasses, 10, 5, 1));
+            (features, labels, numClasses) -> new DecisionTreeClassifier(numClasses, 10, 5, 1, features[0].length, new Random(42)));
         
         // Random Forest
         runExperiment("Random Forest (10 trees)", 
