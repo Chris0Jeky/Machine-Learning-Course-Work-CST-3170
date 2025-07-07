@@ -96,16 +96,12 @@ public class Main {
     private static void runKNNExperiments() {
         printAndLog("\n========== K-NEAREST NEIGHBORS CLASSIFIERS ==========");
         
-        // Standard k-NN with different k values
-        int[] kValues = {3, 5, 7};
+        // Weighted k-NN with different k values
+        int[] kValues = {3, 4, 5};
         for (int k : kValues) {
-            runExperiment(k + "-Nearest Neighbors", 
-                (features, labels, numClasses) -> new KNearestNeighborsClassifier(k));
+            runExperiment("Weighted " + k + "-NN", 
+                (features, labels, numClasses) -> new WeightedKNearestNeighborsClassifier(k, numClasses));
         }
-        
-        // Weighted k-NN
-        runExperiment("Weighted 4-NN", 
-            (features, labels, numClasses) -> new WeightedKNearestNeighborsClassifier(4, numClasses));
     }
     
     private static void runNeuralNetworkExperiments() {
@@ -114,10 +110,6 @@ public class Main {
         // Multi-layer Perceptron
         runExperiment("MLP (100 hidden units)", 
             (features, labels, numClasses) -> new MLPClassifier(features[0].length, 100, numClasses, 0.002, 100));
-        
-        // Multi-class Perceptron
-        runExperiment("Multi-class Perceptron", 
-            (features, labels, numClasses) -> new MulticlassPerceptronClassifier(features[0].length, numClasses, 0.01, 50));
     }
     
     private static void runSVMExperiments() {
