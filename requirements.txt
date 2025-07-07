@@ -1,0 +1,13 @@
+# Requirements for Machine Learning Classifier Comparison
+
+## Core Requirements (Required)
+# Java Development Kit (JDK) 8 or higher
+# No external Java libraries required - all ML algorithms implemented from scratch
+
+## Optional Requirements (For Visualization)
+# Python 3.6 or higher
+matplotlib>=3.0.0
+numpy>=1.16.0
+
+# To install visualization dependencies:
+# pip install -r requirements.txt
