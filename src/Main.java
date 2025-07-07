@@ -121,10 +121,6 @@ public class Main {
         
         // SVM with centroid features
         runExperimentWithCentroidFeatures("SVM with Centroid Features");
-        
-        // Kernel SVM with RBF
-        runExperiment("RBF Kernel SVM", 
-            (features, labels, numClasses) -> new MulticlassKernelSVMClassifier(new RBFKernel(0.1), 0.001, 0.01, 500, features[0].length, numClasses));
     }
     
     private static void runTreeBasedExperiments() {
