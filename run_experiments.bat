@@ -28,9 +28,8 @@ echo Running experiments...
 echo This may take a few minutes depending on your system.
 echo.
 
-REM Change to out directory and run Main class
-cd out
-java Main
+REM Run Main class with classpath
+java -cp out Main
 
 REM Check if execution was successful
 if %errorlevel% equ 0 (
@@ -42,12 +41,8 @@ if %errorlevel% equ 0 (
 ) else (
     echo.
     echo Experiment execution failed!
-    cd ..
     pause
     exit /b 1
 )
-
-REM Return to original directory
-cd ..
 
 pause

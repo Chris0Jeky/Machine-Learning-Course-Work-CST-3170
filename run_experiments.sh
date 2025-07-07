@@ -30,9 +30,8 @@ echo "Running experiments..."
 echo "This may take a few minutes depending on your system."
 echo ""
 
-# Change to out directory and run Main class
-cd out
-java Main
+# Run Main class with classpath
+java -cp out Main
 
 # Check if execution was successful
 if [ $? -eq 0 ]; then
@@ -46,6 +45,3 @@ else
     echo "Experiment execution failed!"
     exit 1
 fi
-
-# Return to original directory
-cd ..
